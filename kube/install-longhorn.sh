@@ -7,5 +7,5 @@ helm repo update
 
 #install longhorn - storage provider
 kubectl create namespace longhorn-system
-helm install longhorn longhorn/longhorn --namespace longhorn-system -f longhorn-values.yaml
+helm install longhorn longhorn/longhorn --namespace longhorn-system
 
