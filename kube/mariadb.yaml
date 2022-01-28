@@ -4,7 +4,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: mariadb-pvc
 spec:
-  storageClassName: longhorn
+  storageClassName: default
   accessModes:
     - ReadWriteOnce
   resources:
