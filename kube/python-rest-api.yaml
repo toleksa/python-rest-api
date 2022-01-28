@@ -1,0 +1,48 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-rest-api-deployment
+  labels:
+    app: python-rest-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: python-rest-api
+  template:
+    metadata:
+      labels:
+        app: python-rest-api
+    spec:
+      containers:
+      - name: python-rest-api
+        image: toleksa/python-rest-api
+        ports:
+        - containerPort: 5000
+        env:
+        - name: DB_USER
+          value: root
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: mariadb-root-password
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: mariadb-configmap
+              key: database_url
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-rest-api-service
+spec:
+  selector:
+    app: python-rest-api
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
