@@ -41,7 +41,7 @@ metadata:
 spec:
   selector:
     app: python-rest-api
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - protocol: TCP
       port: 5000
