@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, redirect
 
 app = Flask(__name__)
 
@@ -10,6 +10,9 @@ data = [
     }
 ]
 
+@app.route('/')
+def hello():
+    return redirect("/data", code=302)
 
 @app.route('/data')
 def get_incomes():
