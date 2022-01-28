@@ -7,7 +7,6 @@ fi
 
 if [ "$1" == "yes" ]; then
     echo "installing rke2"
-    chmod +x ./install-kube.sh
     ./install-kube.sh
     . ~/.bashrc
 elif [ "$1" == "no" ]; then
@@ -18,7 +17,6 @@ else
 fi
 
 echo "installing longhorn"
-chmod +x ./install-longhorn.sh
 ./install-longhorn.sh
 
 echo "installing metallb"
@@ -28,6 +26,5 @@ kubectl apply -f config-ingress.yaml
 METALLB_ADDRESSES=${METALLB_ADDRESSES:=`hostname -I | awk '{print $1"-"$1}'`} envsubst < metallb-configmap.yaml | kubectl apply -f -
 
 echo "deploying app"
-chmod +x ./deploy.sh
 ./deploy.sh
 
