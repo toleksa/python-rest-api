@@ -92,3 +92,5 @@ ingress.networking.k8s.io/python-rest-api-ingress created
 root@ubuntu:~/python-rest-api/kube#
 
 ```
+
+webbrowser -> api.v1.kube.ac
