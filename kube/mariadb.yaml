@@ -19,9 +19,9 @@ data:
   database_url: mariadb-service
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: mariadb-deployment
+  name: mariadb-statefulset
   labels:
     app: mariadb
 spec:
