@@ -21,6 +21,12 @@ echo "installing longhorn"
 chmod +x ./install-longhorn.sh
 ./install-longhorn.sh
 
+echo "installing metallb"
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/namespace.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/metallb.yaml
+kubectl apply -f config-ingress.yaml
+METALLB_ADDRESSES=${METALLB_ADDRESSES:=`hostname -I | awk '{print $1"-"$1}'`} envsubst < metallb-configmap.yaml | kubectl apply -f -
+
 echo "deploying app"
 chmod +x ./deploy.sh
 ./deploy.sh
