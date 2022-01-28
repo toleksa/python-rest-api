@@ -29,6 +29,7 @@ spec:
   selector:
     matchLabels:
       app: mariadb
+  serviceName: mariadb
   template:
     metadata:
       labels:
