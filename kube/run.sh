@@ -9,6 +9,7 @@ if [ "$1" == "yes" ]; then
     echo "installing rke2"
     chmod +x ./install-kube.sh
     ./install-kube.sh
+    . ~/.bashrc
 elif [ "$1" == "no" ]; then
     echo "skipping rke2"
 else
