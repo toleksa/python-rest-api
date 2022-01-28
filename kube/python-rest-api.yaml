@@ -27,7 +27,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: mariadb-secret
-              key: mariadb-root-password
+              key: password
         - name: DB_HOST
           valueFrom:
             configMapKeyRef:
