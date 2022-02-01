@@ -18,7 +18,7 @@ except mariadb.Error as e:
     sys.exit(1)
 
 @app.route('/')
-def redirect():
+def go_to_data():
     return redirect("/data", code=302)
 
 @app.route('/data', methods=['GET'])
