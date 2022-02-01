@@ -1,0 +1,25 @@
+---
+service:
+  type: ClusterIP
+  port: 3306
+
+global:
+  storageClass: "longhorn"
+
+primary:
+  persistence:
+    enabled: true
+    size: 1Gi
+
+auth:
+  database: python_rest_api
+  username: python-rest-api
+  authPassword: password123
+  auth.existingSecret: ""
+
+initdbScripts:
+  init.sql: |
+    create table python_rest_api.dict(k varchar(50) primary key,v varchar (50));
+    insert into python_rest_api.dict (k,v) values ('Homer','Simpson');
+    insert into python_rest_api.dict (k,v) values ('Jeffrey','Lebowski');
+    insert into python_rest_api.dict (k,v) values ('Stan','Smith');
