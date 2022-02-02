@@ -27,10 +27,10 @@ helm repo add longhorn https://charts.longhorn.io
 helm repo update
 
 echo "installing longhorn"
-helm install --create-namespace longhorn longhorn/longhorn --namespace longhorn-system
+helm install --create-namespace --namespace longhorn-system longhorn longhorn/longhorn
 
 echo "installing metallb"
-helm install--create-namespace --namespace metallb-system  metallb bitnami/metallb -f - <<EOF
+helm install --create-namespace --namespace metallb-system  metallb bitnami/metallb -f - <<EOF
 configInline:
   address-pools:
   - name: default
