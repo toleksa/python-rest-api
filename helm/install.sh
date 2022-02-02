@@ -38,8 +38,7 @@ configInline:
     addresses:
     - `hostname -I | awk '{print $1"-"$1}'`
 EOF
-kubectl apply -f config-ingress.yaml
 
-helm install mariadb bitnami/mariadb -f values.yaml
-kubectl apply -f python-rest-api.yaml
+helm install mariadb bitnami/mariadb -f mariadb-values.yaml
+helm install python-rest-api ./python-rest-api
 
