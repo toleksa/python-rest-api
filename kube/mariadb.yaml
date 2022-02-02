@@ -51,9 +51,16 @@ spec:
         - name: MARIADB_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mariadb-secret
-              key: password
+              name: mariadb
+              key: mariadb-root-password
+       - name: MARIADB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb
+              key: mariadb-password
         - name: MARIADB_DATABASE
+          value: python_rest_api
+        - name: MARIADB_USER
           value: python-rest-api
 ---
 apiVersion: v1
