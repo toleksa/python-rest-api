@@ -53,7 +53,7 @@ spec:
             secretKeyRef:
               name: mariadb
               key: mariadb-root-password
-       - name: MARIADB_PASSWORD
+        - name: MARIADB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: mariadb
