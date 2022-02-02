@@ -1,10 +1,14 @@
 # Dockerfile
 
 FROM python:3.10.2-slim-bullseye
-RUN apt-get update
-RUN apt-get install -y libmariadb-dev gcc
-RUN /usr/local/bin/python -m pip install --upgrade pip
-RUN pip install flask mariadb
+RUN apt-get update \
+    && apt-get install -y libmariadb-dev gcc \
+    && /usr/local/bin/python -m pip install --upgrade pip \
+    && pip install flask mariadb \
+    && apt-get remove -y gcc \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 RUN ln -sf /usr/share/zoneinfo/Europe/Zurich /etc/localtime
 
 EXPOSE 5000
