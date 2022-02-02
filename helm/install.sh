@@ -13,6 +13,22 @@ if [ "$1" == "yes" ]; then
   echo "export PATH=\$PATH:/var/lib/rancher/rke2/bin" >> ~/.bashrc
   echo "export KUBECONFIG=/etc/rancher/rke2/rke2.yaml" >> ~/.bashrc
   . ~/.bashrc
+  kubectl apply -f - <<EOF
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: rke2-ingress-nginx
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    controller:
+      publishService:
+        enabled: true
+        pathOverride: kube-system/rke2-ingress-nginx-controller
+      service:
+        enabled: true
+        type: LoadBalancer
+EOF
 elif [ "$1" == "no" ]; then
   echo "skipping rke2"
 else
