@@ -21,11 +21,13 @@ spec:
         server:
           extraArgs:
             - --insecure
+          {{- if .Values.argocd.server.ingress.enabled }}
           ingress:
             enabled: true
             https: false
             hosts:
             - "argocd.{{ .Values.domain }}"
+          {{- end }}
         config:
           repositories: |
             - type: helm
