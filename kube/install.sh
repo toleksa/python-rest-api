@@ -30,10 +30,15 @@ echo "installing longhorn"
 helm install --create-namespace longhorn longhorn/longhorn --namespace longhorn-system
 
 echo "installing metallb"
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/namespace.yaml
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/metallb.yaml
+helm install--create-namespace --namespace metallb-system  metallb bitnami/metallb -f - <<EOF
+configInline:
+  address-pools:
+  - name: default
+    protocol: layer2
+    addresses:
+    - `hostname -I | awk '{print $1"-"$1}'`
+EOF
 kubectl apply -f config-ingress.yaml
-METALLB_ADDRESSES=${METALLB_ADDRESSES:=`hostname -I | awk '{print $1"-"$1}'`} envsubst < metallb-configmap.yaml | kubectl apply -f -
 
 helm install mariadb bitnami/mariadb -f values.yaml
 kubectl apply -f python-rest-api.yaml
