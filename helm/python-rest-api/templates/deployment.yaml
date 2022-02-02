@@ -47,6 +47,16 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          env:
+          - name: DB_USER
+            value: python-rest-api
+          - name: DB_PASS
+            valueFrom:
+              secretKeyRef:
+                name: mariadb
+                key: mariadb-password
+          - name: DB_HOST
+            value: mariadb
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
