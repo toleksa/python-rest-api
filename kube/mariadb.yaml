@@ -39,14 +39,20 @@ spec:
         - name: mariadb-db-volume
           persistentVolumeClaim:
             claimName: mariadb-pvc
+        - name: mariadb-init
+          configMap: 
+            name: mariadb-init
       containers:
       - name: mariadb
         image: mariadb
         ports:
         - containerPort: 3306
         volumeMounts:
-          - mountPath: "/var/lib/mysql"
-            name: mariadb-db-volume
+          - name: mariadb-db-volume
+            mountPath: "/var/lib/mysql"
+          - name: mariadb-init
+            mountPath: "/docker-entrypoint-initdb.d/init.sql"
+            subPath: init.sql
         env:
         - name: MARIADB_ROOT_PASSWORD
           valueFrom:
