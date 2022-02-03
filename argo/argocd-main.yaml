@@ -7,7 +7,7 @@ spec:
   destination:
     namespace: default
     server: 'https://kubernetes.default.svc'
-  project: argocd
+  project: default
   source:
     repoURL: 'https://github.com/toleksa/python-rest-api'
     targetRevision: HEAD
