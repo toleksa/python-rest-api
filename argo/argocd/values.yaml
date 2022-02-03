@@ -1,0 +1,16 @@
+domain: example.com
+
+longhorn:
+  defaultClassReplicaCount: 1
+  ingress:
+    enabled: false
+
+argocd:
+  installCRDs: false
+  global:
+    image:
+      tag: v2.1.3
+  server:
+    ingress:
+      enabled: true
+

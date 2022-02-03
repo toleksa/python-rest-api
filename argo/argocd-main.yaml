@@ -1,31 +1,31 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: python-rest-api
+  name: python-rest-api-main
   namespace: argocd
 spec:
   destination:
     namespace: default
     server: 'https://kubernetes.default.svc'
-  project: default
+  project: argocd
   source:
     repoURL: 'https://github.com/toleksa/python-rest-api'
     targetRevision: HEAD
-    path: 'helm/python-rest-api'
+    path: 'argo/argocd'
     helm:
       values: |
-        ingress:
-          enabled: true
-          className: ""
-          annotations: {}
-            # kubernetes.io/ingress.class: nginx
-            # kubernetes.io/tls-acme: "true"
-          hosts:
-            - host: api.kube.ac
-              paths:
-                - path: /
-                  pathType: ImplementationSpecific
-          tls: []
+        domain: 'example.com'
+        metallb:
+          pools:
+          - name: default
+            protocol: layer2
+            addresses:
+            - $METALLB_ADDRESSES
+            avoid-buggy-ips: true
+        argocd:
+          server:
+            ingress:
+              enabled: true
   syncPolicy:
     automated:
       prune: true

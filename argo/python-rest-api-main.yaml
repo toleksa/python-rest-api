@@ -14,18 +14,6 @@ spec:
     path: 'argo'
     helm:
       values: |
-        metallb:
-          pools:
-          - name: default
-            protocol: layer2
-            addresses:
-            - $METALLB_ADDRESSES
-            avoid-buggy-ips: true
-        argocd:
-          server:
-            ingress:
-              enabled: true
-        domain: 'kube.ac'
   syncPolicy:
     automated:
       prune: true
