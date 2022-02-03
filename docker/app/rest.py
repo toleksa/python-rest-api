@@ -47,3 +47,7 @@ def insert():
     conn.commit()
   return '', 204
 
+@app.route('/health')
+def health():
+  return '', 200
+
