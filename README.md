@@ -45,7 +45,7 @@ in each case install process is the same - go into directory and execute:
     
     no - skip installing rke2 - in case kubernetes is already installed
 
-app will be available at api.kube.ac
+app will be available at **api.kube.ac**
 
 
 
@@ -53,11 +53,11 @@ app will be available at api.kube.ac
 
 app is implementing key-value dictionary with methods:
 
-GET api.kube.ac/data - will return all records
+    GET api.kube.ac/data - will return all records
 
-GET api.kube.ac/data?k=<key> - will return record for that key
+    GET api.kube.ac/data?k=<key> - will return record for that key
     
-POST -H "Content-Type: application/json" -d "{ \"<key>\": \"<value>\" }" - adds new record or updates value if record with this key already exists
+    POST -H "Content-Type: application/json" -d "{ \"<key>\": \"<value>\" }" - adds new record or updates value if record with this key already exists
   
   
   
