@@ -40,10 +40,12 @@ kubectl -n argocd patch secret argocd-secret \
     "admin.passwordMtime": "'$(date +%FT%T%Z)'"
   }}'
 
+#argocd proj create argocd -d https://kubernetes.default.svc,argocd -s https://github.com/toleksa/python-rest-api.git
 METALLB_ADDRESSES=${METALLB_ADDRESSES:=`hostname -I | awk '{print $1"-"$1}'`} envsubst < argocd-main.yaml | kubectl apply -f -
 
 # remove argocd entry from helm, now it's selfmanaged
 kubectl delete secret -l owner=helm,name=argocd -n argocd
 
+#argocd proj create python-rest-api -d https://kubernetes.default.svc,python-rest-api -s https://github.com/toleksa/python-rest-api.git
 kubectl apply -f python-rest-api-main.yaml
 
