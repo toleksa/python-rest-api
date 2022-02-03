@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: 'https://github.com/toleksa/python-rest-api'
     targetRevision: HEAD
-    path: 'argo'
+    path: 'argo/python-rest-api'
     helm:
       values: |
   syncPolicy:
