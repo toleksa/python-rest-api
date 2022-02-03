@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mariadb
+  namespace: argocd
+spec:
+  destination:
+    namespace: default
+    server: 'https://kubernetes.default.svc'
+  project: default
+  source:
+    repoURL: 'https://charts.bitnami.com/bitnami'
+    targetRevision: '10.3.2'
+    chart: mariadb
+    helm:
+      values: |
+        service:
+          type: ClusterIP
+          port: 3306
+
+        global:
+          storageClass: "longhorn"
+        
+        primary:
+          persistence:
+            enabled: true
+            size: 1Gi
+
+        auth:
+          database: python_rest_api
+          username: python-rest-api
+
+        initdbScripts:
+          init.sql: |
+            create table python_rest_api.dict(k varchar(50) primary key,v varchar (50));
+            insert into python_rest_api.dict (k,v) values ('Homer','Simpson');
+            insert into python_rest_api.dict (k,v) values ('Jeffrey','Lebowski');
+            insert into python_rest_api.dict (k,v) values ('Stan','Smith');
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=false

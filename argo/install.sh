@@ -40,27 +40,16 @@ kubectl -n argocd patch secret argocd-secret \
     "admin.passwordMtime": "'$(date +%FT%T%Z)'"
   }}'
 
-# install kube-argo app
-. ./env ; METALLB_ADDRESSES=${METALLB_ADDRESSES:=`hostname -I | awk '{print $1"-"$1}'`} envsubst < kube-argo.yaml | kubectl apply -f -
-
-# remove argocd entry from helm, now it's selfmanaged
-kubectl delete secret -l owner=helm,name=argocd -n argocd
-
-exit 0
-
-echo "installing longhorn"
-helm install --create-namespace --namespace longhorn-system longhorn longhorn/longhorn
-
-echo "installing metallb"
-helm install --create-namespace --namespace metallb-system  metallb bitnami/metallb -f - <<EOF
-configInline:
-  address-pools:
+helm install python-rest-api . -f - <<EOF
+`cat values.yaml`
+metallb:
+  pools:
   - name: default
     protocol: layer2
     addresses:
     - `hostname -I | awk '{print $1"-"$1}'`
 EOF
 
-helm install mariadb bitnami/mariadb -f mariadb-values.yaml
-helm install python-rest-api ./python-rest-api -f python-rest-api-values.yaml
+# remove argocd entry from helm, now it's selfmanaged
+kubectl delete secret -l owner=helm,name=argocd -n argocd
 
