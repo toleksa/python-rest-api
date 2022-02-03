@@ -38,6 +38,7 @@ argo/ - use argocd app of apps
 
 in each case install process is the same - go into directory and execute:
 
+
 install.sh - script takes one parameter:
 
     yes - will install rke2
