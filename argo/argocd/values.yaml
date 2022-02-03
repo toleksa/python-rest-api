@@ -14,3 +14,6 @@ argocd:
     ingress:
       enabled: true
 
+metallb:
+  pools: []
+
