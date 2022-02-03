@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: python-rest-api-main
+  name: argocd-main
   namespace: argocd
 spec:
   destination:
