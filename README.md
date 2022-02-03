@@ -2,6 +2,7 @@
 
 ## app files
 docker/app/
+
     rest.py - actuall app
     
     start.sh - run script
@@ -12,6 +13,7 @@ docker/app/
     
 ## docker files
 docker/
+
     Dockerfile - :)
     
     run.sh - launch container
