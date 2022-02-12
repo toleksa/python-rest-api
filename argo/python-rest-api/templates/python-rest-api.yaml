@@ -24,7 +24,7 @@ spec:
             - host: api.kube.ac
               paths:
                 - path: /
-                  pathType: ImplementationSpecific
+                  pathType: Prefix
           tls: []
   syncPolicy:
     automated:
