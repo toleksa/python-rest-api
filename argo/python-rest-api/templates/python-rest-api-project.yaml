@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: python-rest-api
+  namespace: argocd
+spec:
+  destinations:
+  - namespace: python-rest-api
+    server: '*'
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  sourceRepos:
+  - 'https://github.com/toleksa/python-rest-api'
+

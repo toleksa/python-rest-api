@@ -5,9 +5,9 @@ metadata:
   namespace: argocd
 spec:
   destination:
-    namespace: default
+    namespace: python-rest-api
     server: 'https://kubernetes.default.svc'
-  project: default
+  project: python-rest-api
   source:
     repoURL: 'https://github.com/toleksa/python-rest-api'
     targetRevision: HEAD

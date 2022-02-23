@@ -5,7 +5,7 @@ metadata:
   namespace: argocd
 spec:
   destination:
-    namespace: default
+    namespace: python-rest-api
     server: 'https://kubernetes.default.svc'
   project: default
   source:
