@@ -7,7 +7,8 @@ fi
 
 if [ "$1" == "yes" ]; then
   echo "installing rke2"
-  ../kube/install-rke2.sh
+  curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-rke2.sh | bash
+  curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-bash.sh | bash
   . ~/.bashrc
 elif [ "$1" == "no" ]; then
   echo "skipping rke2"
@@ -17,35 +18,11 @@ else
 fi
 
 echo "installing helm"
-curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-helm repo add argo-cd https://argoproj.github.io/argo-helm
-helm repo update
+curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-helm.sh | bash
 
-echo "Waiting for kubernetes to start"
-until kubectl get nodes | grep `hostname` | grep " Ready " ; do
-  sleep 5s
-  echo -n .
-done
-echo ""
-kubectl get nodes
-echo ""
+echo "installing argocd"
+curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-argo.sh | bash
 
-helm install --create-namespace --namespace argocd argocd argo-cd/argo-cd
-
-# setting credentials to admin/password <- for simplicity of example, I know it's uglyyy
-# bcrypt(password)=$2a$10$rRyBsGSHK6.uc8fntPwVIuLVHgsAhAX7TcdrqW/RADU0uh7CaChLa
-kubectl -n argocd patch secret argocd-secret \
-  -p '{"stringData": {
-    "admin.password": "$2a$10$rRyBsGSHK6.uc8fntPwVIuLVHgsAhAX7TcdrqW/RADU0uh7CaChLa",
-    "admin.passwordMtime": "'$(date +%FT%T%Z)'"
-  }}'
-
-#argocd proj create argocd -d https://kubernetes.default.svc,argocd -s https://github.com/toleksa/python-rest-api.git
-METALLB_ADDRESSES=${METALLB_ADDRESSES:=`hostname -I | awk '{print $1"-"$1}'`} envsubst < argocd-main.yaml | kubectl apply -f -
-
-# remove argocd entry from helm, now it's selfmanaged
-kubectl delete secret -l owner=helm,name=argocd -n argocd
-
-#argocd proj create python-rest-api -d https://kubernetes.default.svc,python-rest-api -s https://github.com/toleksa/python-rest-api.git
+echo "installing python-rest-api"
 kubectl apply -f python-rest-api-main.yaml
 
