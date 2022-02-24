@@ -21,7 +21,7 @@ spec:
             # kubernetes.io/ingress.class: nginx
             # kubernetes.io/tls-acme: "true"
           hosts:
-            - host: api.kube.ac
+            - host: "python-rest-api.{{ .Values.domain}}"
               paths:
                 - path: /
                   pathType: Prefix

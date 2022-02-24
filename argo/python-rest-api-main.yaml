@@ -14,6 +14,7 @@ spec:
     path: 'argo/python-rest-api'
     helm:
       values: |
+        domain: example.com
   syncPolicy:
     automated:
       prune: true
