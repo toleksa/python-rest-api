@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+set -e
 
 if [ $# -ne 1 ]; then
     echo "usage: $0 <install rke2:yes|no>"
