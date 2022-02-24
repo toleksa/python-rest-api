@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 if [ $# -ne 1 ]; then
     echo "usage: $0 <install rke2:yes|no>"
     exit 1
@@ -16,6 +18,13 @@ else
   echo "unrecognized option"
   exit 1
 fi
+
+#check if kubectl installed
+kubectl &> /dev/null
+if [ $? -ne 0 ]; then
+  echo "ERR: check kubectl installation"
+  exit 1
+fi 
 
 echo "installing helm"
 curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-helm.sh | bash
