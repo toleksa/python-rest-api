@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [ $# -ne 1 ]; then
     echo "usage: $0 <install rke2:yes|no>"
     exit 1
@@ -7,7 +9,8 @@ fi
 
 if [ "$1" == "yes" ]; then
   echo "installing rke2"
-  ../kube/install-rke2.sh
+  curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-rke2.sh | bash
+  curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-bash.sh | bash
   . ~/.bashrc
 elif [ "$1" == "no" ]; then
   echo "skipping rke2"
@@ -17,10 +20,7 @@ else
 fi
 
 echo "installing helm"
-curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-helm repo add bitnami https://charts.bitnami.com/bitnami
-helm repo add longhorn https://charts.longhorn.io
-helm repo update
+curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-helm.sh | bash
 
 echo "installing longhorn"
 helm install --create-namespace --namespace longhorn-system longhorn longhorn/longhorn
