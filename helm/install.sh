@@ -36,5 +36,5 @@ configInline:
 EOF
 
 helm install mariadb bitnami/mariadb -f mariadb-values.yaml
-helm install python-rest-api ./python-rest-api -f python-rest-api-values.yaml
+sed -e "s/example.com/`hostname -f`/" python-rest-api-values.yaml | helm install python-rest-api ./python-rest-api -f -
 
