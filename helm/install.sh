@@ -19,6 +19,13 @@ else
   exit 1
 fi
 
+#check if kubectl installed
+kubectl &> /dev/null
+if [ $? -ne 0 ]; then
+  echo "ERR: check kubectl installation"
+  exit 1
+fi 
+
 echo "installing helm"
 curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-helm.sh | bash
 
