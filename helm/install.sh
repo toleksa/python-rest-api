@@ -42,6 +42,6 @@ configInline:
     - `hostname -I | awk '{print $1"-"$1}'`
 EOF
 
-helm install mariadb bitnami/mariadb -f mariadb-values.yaml
-sed -e "s/example.com/`hostname -f`/" python-rest-api-values.yaml | helm install python-rest-api ./python-rest-api -f -
+helm install --create-namespace --namespace python-rest-api mariadb bitnami/mariadb -f mariadb-values.yaml
+sed -e "s/example.com/`hostname -f`/" python-rest-api-values.yaml | helm install --create-namespace --namespace python-rest-api ./python-rest-api -f -
 
