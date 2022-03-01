@@ -43,5 +43,5 @@ configInline:
 EOF
 
 helm install --create-namespace --namespace python-rest-api mariadb bitnami/mariadb -f mariadb-values.yaml
-sed -e "s/example.com/`hostname -f`/" python-rest-api-values.yaml | helm install --create-namespace --namespace python-rest-api ./python-rest-api -f -
+sed -e "s/example.com/`hostname -f`/" python-rest-api-values.yaml | helm install --create-namespace --namespace python-rest-api python-rest-api ./python-rest-api -f -
 
