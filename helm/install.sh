@@ -39,7 +39,7 @@ configInline:
   - name: default
     protocol: layer2
     addresses:
-    - `hostname -I | awk '{print $1"-"$1}'`
+    - `hostname -I | awk '{print $1"/32"}'`
 EOF
 
 helm install --create-namespace --namespace python-rest-api mariadb bitnami/mariadb -f mariadb-values.yaml
