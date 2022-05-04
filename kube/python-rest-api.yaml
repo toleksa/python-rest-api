@@ -19,7 +19,20 @@ spec:
       - name: python-rest-api
         image: toleksa/python-rest-api
         ports:
-        - containerPort: 5000
+        - name: http
+          containerPort: 5000
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 3
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
         env:
         - name: DB_USER
           value: python-rest-api
