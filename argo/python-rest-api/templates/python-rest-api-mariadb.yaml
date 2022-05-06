@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: mariadb
+  name: python-rest-api-mariadb
   namespace: argocd
 spec:
   destination:
