@@ -53,7 +53,7 @@ spec:
           - name: DB_PASS
             valueFrom:
               secretKeyRef:
-                name: mariadb
+                name: python-rest-api-mariadb
                 key: mariadb-password
           - name: DB_HOST
             value: mariadb
