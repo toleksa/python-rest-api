@@ -4,7 +4,7 @@ FROM python:3.10.2-slim-bullseye
 RUN apt-get update \
     && apt-get install -y libmariadb-dev gcc \
     && /usr/local/bin/python -m pip install --upgrade pip \
-    && pip install flask mariadb==1.0.11 \
+    && pip install flask=2.2.2 mariadb==1.0.11 \
     && apt-get remove -y gcc \
     && apt-get autoremove -y \
     && apt-get clean \
