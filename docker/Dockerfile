@@ -1,6 +1,6 @@
 # Dockerfile
 
-FROM python:3.11.0-slim-bullseye
+FROM python:3.10.2-slim-bullseye
 RUN apt-get update \
     && apt-get install -y libmariadb-dev gcc \
     && /usr/local/bin/python -m pip install --upgrade pip \
