@@ -2,7 +2,7 @@ pipeline {
     environment {                                                                                                                                                                          
         IMAGE = "toleksa/${JOB_NAME}"                                                                                                                                                      
         CREDENTIALS = credentials('dockerhub')                                                                                                                                             
-        SUBDIR = "docker"                                                                                                                                                         
+        SUBDIR = "."                                                                                                                                                         
     }                                                                                                                                                                                      
     agent{                                                                                                                                                                                 
         label ''                                                                                                                                                                           
