@@ -1,7 +1,7 @@
 # python-rest-api
 
 ## app files
-docker/app/
+app/
 
     server.py - actuall app
     
@@ -11,11 +11,9 @@ docker/app/
     
     
     
-## docker files
+## docker tools
 docker/
 
-    Dockerfile - :)
-    
     run.sh - launch container
     
     build.sh - helper to build image
