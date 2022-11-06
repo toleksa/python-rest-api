@@ -3,7 +3,7 @@
 ## app files
 docker/app/
 
-    rest.py - actuall app
+    server.py - actuall app
     
     start.sh - run script
     
