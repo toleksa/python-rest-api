@@ -103,6 +103,16 @@ pipeline {
             }
           }
         }
+        stage('Publish'){
+            steps{
+                script {
+                    docker.withRegistry( '', 'dockerhub' ) {
+                        docker_image.push()
+                        docker_image.push('latest')
+                    }
+                }
+            }
+        }
 
 
     }
