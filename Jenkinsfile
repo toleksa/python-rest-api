@@ -1,3 +1,14 @@
+def withDockerNetwork(Closure inner) {
+//https://www.kabisa.nl/tech/running-multiple-docker-containers-in-parallel-with-jenkins/
+  try {
+    networkId = UUID.randomUUID().toString()
+    sh "docker network create ${networkId}"
+    inner.call(networkId)
+  } finally {
+    sh "docker network rm ${networkId}"
+  }
+}
+
 pipeline {                                                                                                                                                                                 
     environment {                                                                                                                                                                          
         IMAGE = "toleksa/${JOB_NAME}"                                                                                                                                                      
