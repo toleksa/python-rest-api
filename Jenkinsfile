@@ -35,27 +35,27 @@ pipeline {
                 sh 'docker images'                                                                                                                                                         
             }                                                                                                                                                                              
         }  
-//        stage('Unit Test'){
-//          steps{
-//            //sh 'cd ${SUBDIR} ; python3 -m pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_unit_result.xml test_unit.py'
-//            script {
-//              withDockerNetwork{ n ->
-//                docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 8888:80 --network ${n} --hostname webserver") { c ->
-//                  pytest_unit_image = docker.build("${IMAGE}-pytest-unit:${BUILD_NUMBER}","-f src/pytest/unit/Dockerfile .")
-//                  pytest_unit_image.tag("latest")
-//                  pytest_unit_image.inside("--network ${n}") {
-//                    sh 'cd /pytest ; pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=$OLDPWD/test_unit_result.xml /pytest/test_unit.py'
-//                  }
-//                }
-//              }
-//            }
-//          }
-//          post {
-//            always {
-//              junit 'test_unit_result.xml'
-//            }
-//          }
-//        }
+        stage('Unit Test'){
+          steps{
+            //sh 'cd ${SUBDIR} ; python3 -m pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_unit_result.xml test_unit.py'
+            script {
+              withDockerNetwork{ n ->
+                docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 8888:80 --network ${n} --hostname webserver") { c ->
+                  pytest_unit_image = docker.build("${IMAGE}-pytest-unit:${BUILD_NUMBER}","-f src/pytest/unit/Dockerfile .")
+                  pytest_unit_image.tag("latest")
+                  pytest_unit_image.inside("--network ${n}") {
+                    sh 'cd /pytest ; pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=$OLDPWD/test_unit_result.xml /pytest/test_unit.py'
+                  }
+                }
+              }
+            }
+          }
+          post {
+            always {
+              junit 'test_unit_result.xml'
+            }
+          }
+        }
 //        stage('Integration Test') {
 //          steps {
 //            //script {
