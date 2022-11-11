@@ -3,7 +3,7 @@ RUN apk add --no-cache python3 py3-pytest
 
 WORKDIR /pytest
 COPY app app/
-COPY tests/unit/test_unit.py ./
-CMD pytest --junit-xml=test_unit.xml test_unit.py
+COPY tests/integration/test_integration.py ./
+CMD pytest --junit-xml=test_integration.xml test_integration.py
 
 
