@@ -52,38 +52,38 @@ pipeline {
             }
           }
         }
-//        stage('Integration Test') {
-//          steps {
-//            //script {
-//            //  network_name = "${BUILD_TAG}"
-//            //  sh "docker network create ${network_name}"
-//            //  docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 8888:80 --network ${network_name} --hostname webserver") {
-//            //    pytest_image = docker.build("${IMAGE}-pytest:${BUILD_NUMBER}","src/pytest")
-//            //    pytest_image.tag("latest")
-//            //    pytest_image.inside("--network ${network_name}") {
-//            //      sh 'pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_web_result.xml /pytest/test_web.py'
-//            //    }
-//            //  }
-//            //  sh "docker network rm ${network_name}"
-//            //}
-//            script {
-//              withDockerNetwork{ n ->
-//                docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 8888:80 --network ${n} --hostname webserver") { c ->
-//                  pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","src/pytest/integration")
-//                  pytest_integration_image.tag("latest")
-//                  pytest_integration_image.inside("--network ${n}") {
-//                    sh 'pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_web_result.xml /pytest/test_web.py'
-//                  }
-//                }
-//              }
-//            }
-//          }
-//          post {
-//            always {
-//              junit 'test_web_result.xml'
-//            }
-//          }
-//        }
+        stage('Integration Test') {
+          steps {
+            //script {
+            //  network_name = "${BUILD_TAG}"
+            //  sh "docker network create ${network_name}"
+            //  docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 8888:80 --network ${network_name} --hostname webserver") {
+            //    pytest_image = docker.build("${IMAGE}-pytest:${BUILD_NUMBER}","src/pytest")
+            //    pytest_image.tag("latest")
+            //    pytest_image.inside("--network ${network_name}") {
+            //      sh 'pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_web_result.xml /pytest/test_web.py'
+            //    }
+            //  }
+            //  sh "docker network rm ${network_name}"
+            //}
+            script {
+              withDockerNetwork{ n ->
+                docker.image("mariadb:10.10.2").withRun("-p 3306:3306 --network ${n} --hostname db -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='db'") { c ->
+                  pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
+                  pytest_integration_image.tag("latest")
+                  pytest_integration_image.inside("--network ${n} -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='db'") {
+                    sh 'pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py'
+                  }
+                }
+              }
+            }
+          }
+          post {
+            always {
+              junit 'test_integration_result.xml'
+            }
+          }
+        }
         stage('Security Test') {
         // requires Jenkins plugin https://plugins.jenkins.io/warnings-ng/
           steps {
