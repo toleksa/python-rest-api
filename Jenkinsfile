@@ -69,11 +69,13 @@ pipeline {
             script {
               withDockerNetwork{ n ->
                 docker.image("mariadb:10.10.2").withRun("-p 3306:3306 --network ${n} --hostname db -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='db' -v ${PWD}/tests/integration/init.sql:/docker-entrypoint-initdb.d/init.sql") { c ->
-                  pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
-                  pytest_integration_image.tag("latest")
-                  pytest_integration_image.inside("--network ${n} -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='db'") {
-                    sh 'pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py'
-                  }
+                	docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 8888:80 --network ${n} --hostname webserver -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='db'") { 
+                  	pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
+                  	pytest_integration_image.tag("latest")
+                  	pytest_integration_image.inside("--network ${n}") {
+                  	  sh 'pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py'
+                  	}
+									}
                 }
               }
             }
