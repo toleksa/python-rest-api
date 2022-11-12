@@ -68,8 +68,8 @@ pipeline {
             //}
             script {
               withDockerNetwork{ n ->
-                docker.image("mariadb:10.10.2").withRun("-p 3306:3306 --network ${n} --hostname db -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='db' -e MARIADB_ROOT_PASSWORD=password -v ${PWD}/tests/integration/init.sql:/docker-entrypoint-initdb.d/init.sql") { c ->
-                	docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 8888:80 --network ${n} --hostname webserver -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='db'") { 
+                docker.image("mariadb:10.10.2").withRun("-p 3306:3306 --network ${n} --hostname db -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api' -e MARIADB_ROOT_PASSWORD=password -v ${PWD}/tests/integration/init.sql:/docker-entrypoint-initdb.d/init.sql") { c ->
+                	docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 8888:80 --network ${n} --hostname webserver -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api'") { 
                   	pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
                   	pytest_integration_image.tag("latest")
                   	pytest_integration_image.inside("--network ${n}") {
