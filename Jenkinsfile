@@ -67,6 +67,7 @@ pipeline {
             //  sh "docker network rm ${network_name}"
             //}
             script {
+              sh 'pwd ; ls -l'
               withDockerNetwork{ n ->
                 docker.image("mariadb:10.10.2").withRun("-p 3306:3306 --network ${n} --hostname db -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api' -e MARIADB_ROOT_PASSWORD=password --mount type=bind,source=${PWD}/tests/integration/init.sql,target=/docker-entrypoint-initdb.d/init.sql") { c ->
                 	docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 5000:5000 --network ${n} --hostname webserver -e DB_PASS=password -e DB_USER=user -e DB_HOST=db") { 
