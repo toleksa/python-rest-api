@@ -73,7 +73,7 @@ pipeline {
                   	pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
                   	pytest_integration_image.tag("latest")
                   	pytest_integration_image.inside("--network ${n}") {
-                  	  sh 'pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py'
+                  	  sh 'apt update ; apt install -y curl ; curl -I http://webserver:5000/health ; ping webserver ; pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py'
                   	}
 									}
                 }
