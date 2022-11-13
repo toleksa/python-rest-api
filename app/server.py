@@ -2,20 +2,26 @@ from flask import Flask, jsonify, request, redirect
 import mariadb
 import sys
 import os
+import time
 
 app = Flask(__name__)
 
-try:
-    conn = mariadb.connect(
-        user=os.environ['DB_USER'],
-        password=os.environ['DB_PASS'],
-        host=os.environ['DB_HOST'],
-        port=3306,
-        database="python_rest_api"
-    )
-except mariadb.Error as e:
-    print(f"Error connecting to MariaDB Platform: {e}")
-    sys.exit(1)
+attempts=0
+
+while True:
+    if attempts > 5:
+        sys.exit(1)
+    try:
+        conn = mariadb.connect(
+            user=os.environ['DB_USER'],
+            password=os.environ['DB_PASS'],
+            host=os.environ['DB_HOST'],
+            port=3306,
+            database="python_rest_api"
+        )
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        time.sleep(3)
 
 @app.route('/')
 def go_to_data():
