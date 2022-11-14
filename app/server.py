@@ -22,6 +22,7 @@ while True:
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
         time.sleep(3)
+    attempts+=1
 
 @app.route('/')
 def go_to_data():
