@@ -9,8 +9,8 @@ app = Flask(__name__)
 attempts=0
 
 while True:
-#    if attempts > 5:
-#        sys.exit(1)
+    if attempts > 5:
+        sys.exit(1)
     try:
         conn = mariadb.connect(
             user=os.environ['DB_USER'],
