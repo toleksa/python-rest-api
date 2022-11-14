@@ -21,7 +21,7 @@ while True:
         )
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
-        print(user + ":" + password + "@" + host)
+        print(os.environ['DB_USER'] + ":" + os.environ['DB_PASS'] + "@" + os.environ['DB_HOST'])
         time.sleep(3)
     attempts+=1
 
