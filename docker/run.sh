@@ -16,9 +16,9 @@ docker run -d \
   mariadb:10.10.2
 
 docker run -d \
+  -p 5000:5000 \
   --name python-rest-api \
   --network python-rest-api \
-  -p 5000:5000 \
   --hostname webserver \
   -e DB_PASS=password \
   -e DB_USER=user \
