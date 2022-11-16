@@ -6,11 +6,10 @@ import time
 
 app = Flask(__name__)
 
-attempts=0
+attempts=1
+conn=None
 
 while True:
-    if attempts > 5:
-        sys.exit(1)
     try:
         conn = mariadb.connect(
             user=os.environ['DB_USER'],
@@ -21,9 +20,13 @@ while True:
         )
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
-        print(os.environ['DB_USER'] + ":" + os.environ['DB_PASS'] + "@" + os.environ['DB_HOST'])
-        time.sleep(3)
+    if conn is not None:
+        break
     attempts+=1
+    if attempts > 5:
+        print("ERR: " + str(attempts - 1) + " attempts failed, exiting")
+        sys.exit(1)
+    time.sleep(3)
 
 @app.route('/')
 def go_to_data():
