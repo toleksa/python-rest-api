@@ -54,30 +54,15 @@ pipeline {
         }
         stage('Integration Test') {
           steps {
-            //script {
-            //  network_name = "${BUILD_TAG}"
-            //  sh "docker network create ${network_name}"
-            //  docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 8888:80 --network ${network_name} --hostname webserver") {
-            //    pytest_image = docker.build("${IMAGE}-pytest:${BUILD_NUMBER}","src/pytest")
-            //    pytest_image.tag("latest")
-            //    pytest_image.inside("--network ${network_name}") {
-            //      sh 'pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_web_result.xml /pytest/test_web.py'
-            //    }
-            //  }
-            //  sh "docker network rm ${network_name}"
-            //}
             script {
-              sh 'pwd ; ls -l'
               withDockerNetwork{ n ->
                 docker.image("mariadb:10.10.2").withRun("-p 3306:3306 --network ${n} --hostname db -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api' -e MARIADB_ROOT_PASSWORD=password --mount type=bind,source=${WORKSPACE}/app/init.sql,target=/docker-entrypoint-initdb.d/init.sql") { c ->
                 	docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 5000:5000 --network ${n} --hostname webserver -e DB_PASS=password -e DB_USER=user -e DB_HOST=db") { 
                   	pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
                   	pytest_integration_image.tag("latest")
-                    sh 'docker ps -a ; sleep 5s ; docker ps -a'
                   	pytest_integration_image.inside("--network ${n}") {
                   	  sh 'ping -c 3 webserver ; curl -I http://webserver:5000/health; pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py'
                   	}
-                    sh 'echo DUPA ; docker ps -a'
 									}
                 }
               }
