@@ -75,7 +75,7 @@ pipeline {
                   	pytest_integration_image.tag("latest")
                     sh 'docker ps -a'
                   	pytest_integration_image.inside("--network ${n}") {
-                  	  sh 'pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py'
+                  	  sh 'ping -c c webserver ; curl -I http://webserver:5000/health; pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py'
                   	}
 									}
                 }
