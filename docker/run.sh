@@ -1,7 +1,10 @@
 #!/bin/bash
 
-docker stop python-rest-api python-rest-api-db python-rest-api-redis
-docker rm python-rest-api python-rest-api-db python-rest-api-redis
+for IMG in python-rest-api python-rest-api-db python-rest-api-redis
+do
+  docker stop $IMG
+  docker rm $IMG
+done
 
 docker network create python-rest-api
 docker run -d \
