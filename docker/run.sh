@@ -21,7 +21,7 @@ docker run -d \
 docker run -d \
   -p 6379:6379 \
   --name python-rest-api-redis \
-  --network python-rest-api-redis \
+  --network python-rest-api \
   --hostname redis \
   redis:7.0.5-alpine
 
