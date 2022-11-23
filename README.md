@@ -59,5 +59,5 @@ app is implementing key-value dictionary with methods:
   
 ## dependencies
 
-Fedora - mariadb-connector-c-devel 
+Fedora - dnf install mariadb-connector-c-devel python3-devel
   
