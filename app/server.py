@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, redirect
 import mariadb
+import redis
 import sys
 import os
 import time
@@ -27,6 +28,8 @@ while True:
         print("ERR: " + str(attempts - 1) + " attempts failed, exiting")
         sys.exit(1)
     time.sleep(3)
+
+red = redis.Redis(host='localhost', port=63799, db=0)
 
 @app.route('/')
 def go_to_data():
