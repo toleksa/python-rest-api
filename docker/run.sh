@@ -15,7 +15,7 @@ docker run -d \
   -e MARIADB_USER=user \
   -e MARIADB_DATABASE=python_rest_api \
   -e MARIADB_ROOT_PASSWORD=password \
-  --mount type=bind,source=${PWD}/../app/init.sql,target=/docker-entrypoint-initdb.d/init.sql \
+  -v ${PWD}/../app/init.sql:/docker-entrypoint-initdb.d/init.sql:Z \
   mariadb:10.10.2
 
 docker run -d \
