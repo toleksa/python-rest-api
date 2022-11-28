@@ -7,6 +7,8 @@ import time
 
 app = Flask(__name__)
 
+red = redis.Redis(host='localhost', port=6379, db=0)
+
 attempts=1
 conn=None
 
@@ -29,7 +31,6 @@ while True:
         sys.exit(1)
     time.sleep(3)
 
-red = redis.Redis(host='localhost', port=63799, db=0)
 
 @app.route('/')
 def go_to_data():
@@ -37,15 +38,40 @@ def go_to_data():
 
 @app.route('/data', methods=['GET'])
 def select():
-  cur = conn.cursor()
-  query = "SELECT * from dict"
-  k =request.args.get('k')
-  if k is not None:
-    query += " WHERE k='" + str(request.args.get('k')) +"'"
-  cur.execute(query)
+#  cur = conn.cursor()
+#  query = "SELECT * from dict"
+#  k =request.args.get('k')
+#  if k is not None:
+#    query += " WHERE k='" + str(request.args.get('k')) +"'"
+#  cur.execute(query)
+
   res = []
-  for (k, v) in cur:
-    res.append((k,v))
+
+  key = request.args.get("key")
+  if key is not None:
+    value = red.get(key)
+    if value is None:
+      query = f'SELECT v FROM dict WHERE k="{key}"' 
+      cur = conn.cursor()
+      cur.execute(query)
+      result = cur.fetchone()
+      print(result)
+      if result is not None:
+        value = result[0]
+        red.set(key,value)
+    res.append((key, value))
+    print(res)
+    return jsonify(res)
+
+  print('dupa')
+
+  keys = red.keys()
+  for key in keys:
+    value = res.append((key.decode("utf-8"), red.get(key.decode("utf-8")).decode("utf-8")))
+    
+  print(res)
+#  for (k, v) in cur:
+#    res.append((k,v))
   return jsonify(res)
 
 @app.route('/data', methods=['POST'])
