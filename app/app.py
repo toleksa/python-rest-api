@@ -7,7 +7,7 @@ import time
 
 app = Flask(__name__)
 
-red = redis.Redis(host='localhost', port=6379, db=0)
+red = redis.Redis(host=os.environ['REDIS_HOST'], port=6379, db=0)
 
 attempts=1
 conn=None
