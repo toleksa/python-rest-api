@@ -19,7 +19,6 @@ docker run -d \
   mariadb:10.10.2
 
 docker run -d \
-  -p 6379:6379 \
   --name python-rest-api-redis \
   --network python-rest-api \
   --hostname redis \
