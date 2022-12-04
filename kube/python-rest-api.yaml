@@ -43,6 +43,8 @@ spec:
               key: mariadb-password
         - name: DB_HOST
           value: mariadb
+        - name: REDIS_HOST
+          value: redis
 ---
 apiVersion: v1
 kind: Service
