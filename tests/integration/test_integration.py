@@ -58,23 +58,20 @@ def test_post():
     assert response.status_code == 204
     assert response.is_redirect == False
 
-#TODO: remove this after implementing putting data to redis after adding new record
-def test_select_Winnie():
-    response = requests.get("http://webserver:5000/data?key=Winnie")
-    assert response.status_code == 200
-    assert response.json()[0][1] == "Pooh"
-    result = ['Winnie', 'Pooh']
-    assert response.json()[0] == result
-    assert response.is_redirect == False
-
 def test_select_cache4():
     response = requests.get("http://webserver:5000/cache")
     assert response.status_code == 200
     assert response.is_redirect == False
-    result = [['Winnie','Pooh'],['Homer', 'Simpson']]
-    sorted_result = json.dumps(result, sort_keys=True)
-    sorted_response = json.dumps(response.json(), sort_keys=True)
-    assert sorted_response == sorted_result
+    result = [['Homer', 'Simpson']]
+    assert response == result
+
+def test_select_Winnie():                                                                                                                                                                  
+    response = requests.get("http://webserver:5000/data?key=Winnie")                                                                                                                       
+    assert response.status_code == 200                                                                                                                                                     
+    assert response.json()[0][1] == "Pooh"                                                                                                                                                 
+    result = ['Winnie', 'Pooh']                                                                                                                                                            
+    assert response.json()[0] == result                                                                                                                                                    
+    assert response.is_redirect == False  
 
 def test_select_all2():
     response = requests.get("http://webserver:5000/data")
