@@ -7,6 +7,7 @@ import time
 
 app = Flask(__name__)
 
+#TODO: check if redis is available
 red = redis.Redis(host=os.environ['REDIS_HOST'], port=6379, db=0)
 
 attempts=1
