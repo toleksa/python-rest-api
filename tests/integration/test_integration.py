@@ -1,4 +1,4 @@
-import requests
+import requests, json
 
 # methods in requests object:
 # https://www.w3schools.com/python/ref_requests_response.asp
