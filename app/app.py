@@ -7,11 +7,23 @@ import time
 
 app = Flask(__name__)
 
-#TODO: check if redis is available
 red = redis.Redis(host=os.environ['REDIS_HOST'], port=6379, db=0)
-
 attempts=1
+
+while True:
+    try:
+        red.info()
+        break
+    except redis.exceptions.ConnectionError as e:
+        print(f"Error connecting to  Redis: {e}")
+    attempts+=1
+    if attempts > 5:
+        print("ERR: " + str(attempts - 1) + " attempts failed, exiting")
+        sys.exit(1)
+    time.sleep(3)
+
 conn=None
+attempts=1
 
 while True:
     try:
@@ -31,7 +43,6 @@ while True:
         print("ERR: " + str(attempts - 1) + " attempts failed, exiting")
         sys.exit(1)
     time.sleep(3)
-
 
 @app.route('/')
 def go_to_data():
