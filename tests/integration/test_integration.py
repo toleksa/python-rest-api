@@ -63,7 +63,7 @@ def test_select_cache4():
     assert response.status_code == 200
     assert response.is_redirect == False
     result = [['Homer', 'Simpson']]
-    assert response == result
+    assert response.json == result
 
 def test_select_Winnie():                                                                                                                                                                  
     response = requests.get("http://webserver:5000/data?key=Winnie")                                                                                                                       
