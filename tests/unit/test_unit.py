@@ -6,6 +6,6 @@ def test_app():
     assert os.path.isdir("app")
 
 def test_index():
-    os.path.exists("app/server.py")
-    assert os.path.getsize("app/server.py") == 1482
+    os.path.exists("app/app.py")
+    assert os.path.getsize("app/app.py") == 2415
 
