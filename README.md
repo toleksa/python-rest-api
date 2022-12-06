@@ -57,4 +57,7 @@ app is implementing key-value dictionary with methods:
     
     POST -H "Content-Type: application/json" -d "{ \"<key>\": \"<value>\" }" - adds new record or updates value if record with this key already exists
   
+## dependencies
+
+Fedora - dnf install mariadb-connector-c-devel python3-devel
   

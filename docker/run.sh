@@ -1,7 +1,10 @@
 #!/bin/bash
 
-docker stop python-rest-api python-rest-api-db
-docker rm python-rest-api python-rest-api-db
+for IMG in python-rest-api python-rest-api-db python-rest-api-redis
+do
+  docker stop $IMG
+  docker rm $IMG
+done
 
 docker network create python-rest-api
 docker run -d \
@@ -12,8 +15,14 @@ docker run -d \
   -e MARIADB_USER=user \
   -e MARIADB_DATABASE=python_rest_api \
   -e MARIADB_ROOT_PASSWORD=password \
-  --mount type=bind,source=${PWD}/../app/init.sql,target=/docker-entrypoint-initdb.d/init.sql \
+  -v ${PWD}/../app/init.sql:/docker-entrypoint-initdb.d/init.sql:Z \
   mariadb:10.10.2
+
+docker run -d \
+  --name python-rest-api-redis \
+  --network python-rest-api \
+  --hostname redis \
+  redis:7.0.5-alpine
 
 docker run -d \
   -p 5000:5000 \
