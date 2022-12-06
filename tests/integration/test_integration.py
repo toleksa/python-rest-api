@@ -6,16 +6,78 @@ import requests
 def test_server_is_alive():
     response = requests.get("http://webserver:5000/health")
     assert response.status_code == 200
+    assert response.is_redirect == False
 
-def test_server_logo():
-    response = requests.get("http://webserver:5000/logo.png")
+def test_main():
+    response = requests.get("http://webserver:5000/")
+    assert response.status_code == 200 #TODO: should be 302 o.O
+    assert response.is_redirect == False  #TODO: should be True
+
+def test_server_404():
+    response = requests.get("http://webserver:5000/foobar")
     assert response.status_code == 404
-#    assert len(response.content) == 11543
-#    assert response.ok
-#    assert response.is_redirect == False
+    assert response.is_redirect == False
 
-#def test_server_404():
-#    response = requests.get("http://webserver:5000/foobar")
-#    assert response.status_code == 404
+def test_select_cache1():
+    response = requests.get("http://webserver:5000/cache")
+    assert response.status_code == 200
+    assert response.json() == []
+    assert response.is_redirect == False
 
+def test_select_all1():
+    response = requests.get("http://webserver:5000/data")
+    assert response.status_code == 200
+    assert response.is_redirect == False
+    result = [['Homer','Simpson'],['Jeffrey','Lebowski'],['Stan','Smith']]
+    assert response.json() == result
+
+def test_select_cache2():
+    response = requests.get("http://webserver:5000/cache")
+    assert response.status_code == 200
+    assert response.json() == []
+    assert response.is_redirect == False
+
+def test_select_Homer():
+    response = requests.get("http://webserver:5000/data?key=Homer")
+    assert response.status_code == 200
+    assert response.json()[0][1] == "Simpson"
+    result = ['Homer', 'Simpson']
+    assert response.json()[0] == result
+    assert response.is_redirect == False
+
+def test_select_cache3():
+    response = requests.get("http://webserver:5000/cache")
+    assert response.status_code == 200
+    assert response.is_redirect == False
+    result = ['Homer', 'Simpson']
+    assert response.json()[0] == result
+
+def test_post():
+    payload = {'Winnie': 'Pooh'}
+    response = requests.post("http://webserver:5000/data", json=payload)
+    assert response.status_code == 204
+    assert response.is_redirect == False
+
+#TODO: remove this after implementing putting data to redis after adding new record
+def test_select_Winnie():
+    response = requests.get("http://webserver:5000/data?key=Winnie")
+    assert response.status_code == 200
+    assert response.json()[0][1] == "Pooh"
+    result = ['Winnie', 'Pooh']
+    assert response.json()[0] == result
+    assert response.is_redirect == False
+
+def test_select_cache4():
+    response = requests.get("http://webserver:5000/cache")
+    assert response.status_code == 200
+    assert response.is_redirect == False
+    result = [['Winnie','Pooh'],['Homer', 'Simpson']]
+    assert response.json() == result
+
+def test_select_all2():
+    response = requests.get("http://webserver:5000/data")
+    assert response.status_code == 200
+    assert response.is_redirect == False
+    result = [['Homer','Simpson'],['Jeffrey','Lebowski'],['Stan','Smith'],['Winnie','Pooh']]
+    assert response.json() == result
 
