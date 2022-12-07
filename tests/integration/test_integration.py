@@ -78,7 +78,9 @@ def test_select_cache5():
     assert response.status_code == 200
     assert response.is_redirect == False
     result = [['Winnie', 'Pooh'],['Homer', 'Simpson']]
-    assert response.json() == result
+    sorted_result = sorted(result)
+    sorted_response = sorted(response.json())
+    assert sorted_response == sorted_result
 
 def test_select_all2():
     response = requests.get("http://webserver:5000/data")
