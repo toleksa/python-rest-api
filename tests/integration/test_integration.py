@@ -73,6 +73,13 @@ def test_select_Winnie():
     assert response.json()[0] == result                                                                                                                                                    
     assert response.is_redirect == False  
 
+def test_select_cache5():                                                                                                                                                                  
+    response = requests.get("http://webserver:5000/cache")
+    assert response.status_code == 200
+    assert response.is_redirect == False
+    result = [['Winnie', 'Pooh'],['Homer', 'Simpson']]
+    assert response.json() == result
+
 def test_select_all2():
     response = requests.get("http://webserver:5000/data")
     assert response.status_code == 200
