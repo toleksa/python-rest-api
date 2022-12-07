@@ -101,7 +101,6 @@ def insert():
     except mariadb.Error as e:
       print(f"Error: {e}")
     conn.commit()
-    #TODO: add to redis
   return '', 204
 
 @app.route('/data', methods=['DELETE'])
