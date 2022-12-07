@@ -104,6 +104,17 @@ def insert():
     #TODO: add to redis
   return '', 204
 
+@app.route('/data', methods=['DELETE'])
+def delete():
+    key = request.args.get("key")
+    if key is None:
+        return '', 400
+    query = f'DELETE FROM dict WHERE k="{key}"'
+    cur = conn.cursor()
+    cur.execute(query)
+    red.delete(key)
+    return '', 204
+
 @app.route('/health')
 def health():
   return '', 200
