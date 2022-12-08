@@ -32,5 +32,6 @@ docker run -d \
   -e DB_PASS=password \
   -e DB_USER=user \
   -e DB_HOST=db \
+  -e REDIS_HOST=redis \
   toleksa/python-rest-api:latest
 
