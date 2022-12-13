@@ -51,6 +51,7 @@ kubectl create ns python-rest-api
 kubectl -n python-rest-api create secret generic mariadb --from-literal=mariadb-password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 12 | base64) --from-literal=mariadb-root-password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 12 | base64)
 kubectl -n python-rest-api create configmap mariadb-init --from-literal=init.sql="create table python_rest_api.dict(k varchar(50) primary key,v varchar (50)); insert into python_rest_api.dict (k,v) values ('Homer','Simpson'); insert into python_rest_api.dict (k,v) values ('Jeffrey','Lebowski'); insert into python_rest_api.dict (k,v) values ('Stan','Smith');"
 kubectl -n python-rest-api apply -f mariadb.yaml
+kubectl -n python-rest-api apply -f redis.yaml
 sed -e "s/example.com/`hostname -f`/" python-rest-api.yaml | kubectl -n python-rest-api apply -f -
 
 
