@@ -58,7 +58,7 @@ spec:
           - name: DB_HOST
             value: python-rest-api-mariadb
           - name: REDIS_HOST
-            value: python-rest-api-redis
+            value: python-rest-api-redis-master
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
