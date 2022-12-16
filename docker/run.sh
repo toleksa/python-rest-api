@@ -28,7 +28,7 @@ docker run -d \
   -p 5000:5000 \
   --name python-rest-api \
   --network python-rest-api \
-  --hostname webserver \
+  --hostname api \
   -e DB_PASS=password \
   -e DB_USER=user \
   -e DB_HOST=db \
