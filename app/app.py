@@ -84,7 +84,7 @@ def select(key):
         value = value.decode("utf-8")
     return jsonify((key, value))
 
-@app.route('/data', methods=['POST'])
+@app.route('/data/add', methods=['POST'])
 def insert():
   for k in request.get_json():
     v = request.get_json()[k]
