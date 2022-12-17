@@ -42,7 +42,7 @@ def test_select_Homer():
     assert response.status_code == 200
     assert response.json()[0] == "Simpson"
     result = ['Homer', 'Simpson']
-    assert response.json()[0] == result
+    assert response.json()[1] == result
     assert response.is_redirect == False
 
 def test_select_cache3():
