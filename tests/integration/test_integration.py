@@ -40,7 +40,7 @@ def test_select_cache2():
 def test_select_Homer():
     response = requests.get("http://api:5000/data/Homer")
     assert response.status_code == 200
-    assert response.json()[0][1] == "Simpson"
+    assert response.json()[0] == "Simpson"
     result = ['Homer', 'Simpson']
     assert response.json()[0] == result
     assert response.is_redirect == False
@@ -68,7 +68,7 @@ def test_select_cache4():
 def test_select_Winnie():                                                                                                                                                                  
     response = requests.get("http://api:5000/data/Winnie")                                                                                                                       
     assert response.status_code == 200                                                                                                                                                     
-    assert response.json()[0][1] == "Pooh"                                                                                                                                                 
+    assert response.json()[0] == "Pooh"                                                                                                                                                 
     result = ['Winnie', 'Pooh']                                                                                                                                                            
     assert response.json()[0] == result                                                                                                                                                    
     assert response.is_redirect == False  
@@ -101,7 +101,7 @@ def test_delete2():
 
 def test_delete3():
     response = requests.delete("http://api:5000/data")
-    assert response.status_code == 400
+    assert response.status_code == 405
     assert response.is_redirect == False
 
 def test_select_all3():
