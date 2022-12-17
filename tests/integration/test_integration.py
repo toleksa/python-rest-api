@@ -90,12 +90,12 @@ def test_select_all2():
     assert response.json() == result
 
 def test_delete1():
-    response = requests.delete("http://api:5000/data?key=Winnie")
+    response = requests.delete("http://api:5000/data/del/Winnie")
     assert response.status_code == 204
     assert response.is_redirect == False
 
 def test_delete2():
-    response = requests.delete("http://api:5000/data?key=Winnie")
+    response = requests.delete("http://api:5000/data/del/Winnie")
     assert response.status_code == 204
     assert response.is_redirect == False
 
