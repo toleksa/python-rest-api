@@ -97,9 +97,8 @@ def insert():
     conn.commit()
   return '', 204
 
-@app.route('/data', methods=['DELETE'])
-def delete():
-    key = request.args.get("key")
+@app.route('/data/del/<key>', methods=['DELETE'])
+def delete(key):
     if key is None:
         return '', 400
     query = f'DELETE FROM dict WHERE k="{key}"'
