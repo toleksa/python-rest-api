@@ -54,7 +54,7 @@ def test_select_cache3():
 
 def test_post():
     payload = {'Winnie': 'Pooh'}
-    response = requests.post("http://api:5000/data", json=payload)
+    response = requests.post("http://api:5000/data/add", json=payload)
     assert response.status_code == 204
     assert response.is_redirect == False
 
