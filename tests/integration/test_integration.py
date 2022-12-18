@@ -40,9 +40,9 @@ def test_select_cache2():
 def test_select_Homer():
     response = requests.get("http://api:5000/data/Homer")
     assert response.status_code == 200
-    assert response.json() == "Simpson"
+    assert response.json()[1] == "Simpson"
     result = ['Homer', 'Simpson']
-    assert response.json()[0] == result
+    assert response.json() == result
     assert response.is_redirect == False
 
 def test_select_cache3():
