@@ -3,10 +3,9 @@ services:
   db:
     image: docker.io/library/mariadb:10.10.2
     container_name: python-rest-api-db
-    hostname: db
     command: '--default-authentication-plugin=mysql_native_password'
     volumes:
-      - ${PWD}/../app/init.sql:/docker-entrypoint-initdb.d/init.sql:Z
+      - ${PWD}/app/init.sql:/docker-entrypoint-initdb.d/init.sql:Z
     environment:
       - MARIADB_PASSWORD=password
       - MARIADB_USER=user
@@ -16,12 +15,10 @@ services:
   redis:
     image: docker.io/library/redis:7.0.5-alpine
     container_name: python-rest-api-redis
-    hostname: redis
 
   api:
     image: docker.io/toleksa/python-rest-api:latest
     container_name: python-rest-api
-    hostname: api
     ports:
       - 5000:5000
     environment:
