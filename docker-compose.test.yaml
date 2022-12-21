@@ -1,9 +1,11 @@
 services:
   test:
     image: docker.io/toleksa/python-rest-api-test:latest
-    build: -f tests/integration/Dockerfile .
+    build:
+      context: .
+      dockerfile: tests/integration/Dockerfile
     container_name: python-rest-api-test
-    command: echo "pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py" > run.sh ; chmod +x run.sh ; cat
-    volume:
-      - ${PWD}/tests/integration/test_integration.py:/pytest/test_integration.py
+    entrypoint: tail -f /dev/null
+    volumes:
+      - ${PWD}/tests/integration/test_integration.py:/pytest/test_integration_mount.py:Z
  
