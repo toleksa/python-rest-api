@@ -3,7 +3,7 @@
 ## app files
 app/
 
-    server.py - actuall app
+    app.py - actuall app
     
     start.sh - run script
     
@@ -14,13 +14,21 @@ app/
 ## docker tools
 docker/
 
-    run.sh - launch container
+    run.sh - launch container (doesn't work on Fedora 36+ - use podman-compose)
     
     build.sh - helper to build image
     
     push.sh - helper to push image
     
-    
+## docker compose
+
+    docker-compose.yaml - standard config to run app    
+
+    docker-compose.test.yaml - additionally starts also container with integration-tests
+
+    ```podman-compose up``` to start app
+
+    ```podman-compose -f docker-compose.yaml -f docker-compose.test.yaml up``` to start app and test container
 
 ## kubernetes
 
@@ -56,6 +64,8 @@ app is implementing key-value dictionary with methods:
     GET api.kube.ac/data?k=<key> - will return record for that key
     
     POST -H "Content-Type: application/json" -d "{ \"<key>\": \"<value>\" }" - adds new record or updates value if record with this key already exists
+
+    #TODO: document remaining methods
   
 ## dependencies
 
