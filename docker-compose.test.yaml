@@ -8,4 +8,10 @@ services:
     entrypoint: tail -f /dev/null
     volumes:
       - ${PWD}/tests/integration/test_integration.py:/pytest/test_integration_mount.py:Z
+  db:
+    ports:
+      - 3306:3306
+  redis:
+    ports:
+      - 6379:6379
  
