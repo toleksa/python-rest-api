@@ -89,6 +89,16 @@ def test_select_all2():
     result = [['Homer','Simpson'],['Jeffrey','Lebowski'],['Stan','Smith'],['Winnie','Pooh']]
     assert response.json() == result
 
+def test_delete_error1():
+    response = requests.delete("http://api:5000/data")
+    assert response.status_code == 405
+    assert response.is_redirect == False
+
+def test_delete_error2():
+    response = requests.delete("http://api:5000/data/del")
+    assert response.status_code == 405
+    assert response.is_redirect == False
+
 def test_delete1():
     response = requests.delete("http://api:5000/data/del/Winnie")
     assert response.status_code == 204
