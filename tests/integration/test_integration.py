@@ -131,17 +131,17 @@ def test_select_cache6():
     assert sorted_response == sorted_result
 
 def test_put_error1():
-    response = requests.get("http://api:5000/data/put")
+    response = requests.put("http://api:5000/data/put")
     assert response.status_code == 405
     assert response.is_redirect == False
 
 def test_put1():
-    response = requests.get("http://api:5000/data/put/Marco/value/Chad")
+    response = requests.put("http://api:5000/data/put/Marco/value/Chad")
     assert response.status_code == 404
     assert response.is_redirect == False
 
 def test_put2():
-    response = requests.get("http://api:5000/data/put/Homer/value/Chad")
+    response = requests.put("http://api:5000/data/put/Homer/value/Chad")
     assert response.status_code == 204
     assert response.is_redirect == False
 
@@ -161,7 +161,7 @@ def test_select_all4():
     assert response.json() == result
 
 def test_put3():
-    response = requests.get("http://api:5000/data/put/Homer/value/Simpson")
+    response = requests.put("http://api:5000/data/put/Homer/value/Simpson")
     assert response.status_code == 204
     assert response.is_redirect == False
 
