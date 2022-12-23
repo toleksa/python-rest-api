@@ -97,6 +97,19 @@ def insert():
     conn.commit()
   return '', 204
 
+@app.route('/data/put/<key>/value/<value>', methods=['PUT'])
+def update(key,value):
+    if key is None or value is None:
+        return '', 400
+    query = f'UPDATE dict set v="{value}" WHERE k="{key}"'
+    cur = conn.cursor()
+    cur.execute(query)
+    if cur.rowcount == 0:
+        return '', 404
+    conn.commit()
+    red.delete(key)
+    return '', 204
+
 @app.route('/data/del/<key>', methods=['DELETE'])
 def delete(key):
     if key is None:
