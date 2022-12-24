@@ -18,6 +18,11 @@ def test_server_404():
     assert response.status_code == 404
     assert response.is_redirect == False
 
+def test_reset1():
+    response = requests.get("http://api:5000/reset")
+    assert response.status_code == 204
+    assert response.is_redirect == False
+
 def test_select_cache1():
     response = requests.get("http://api:5000/cache")
     assert response.status_code == 200
@@ -31,7 +36,33 @@ def test_select_all1():
     result = [['Homer','Simpson'],['Jeffrey','Lebowski'],['Stan','Smith']]
     assert response.json() == result
 
+def test_post1():
+    payload = {'Tiger': 'Woods'}
+    response = requests.post("http://api:5000/data/add", json=payload)
+    assert response.status_code == 204
+    assert response.is_redirect == False
+
+def test_select_all2():
+    response = requests.get("http://api:5000/data")
+    assert response.status_code == 200
+    assert response.is_redirect == False
+    result = [['Homer','Simpson'],['Jeffrey','Lebowski'],['Stan','Smith'],['Tiger','Woods']]
+    assert response.json() == result
+
 def test_select_cache2():
+    response = requests.get("http://api:5000/cache")
+    assert response.status_code == 200
+    assert response.json() == []
+    assert response.is_redirect == False
+
+def test_select_all3():
+    response = requests.get("http://api:5000/data")
+    assert response.status_code == 200
+    assert response.is_redirect == False
+    result = [['Homer','Simpson'],['Jeffrey','Lebowski'],['Stan','Smith']]
+    assert response.json() == result
+
+def test_select_cache3():
     response = requests.get("http://api:5000/cache")
     assert response.status_code == 200
     assert response.json() == []
@@ -45,20 +76,20 @@ def test_select_Homer1():
     assert response.json() == result
     assert response.is_redirect == False
 
-def test_select_cache3():
+def test_select_cache4():
     response = requests.get("http://api:5000/cache")
     assert response.status_code == 200
     assert response.is_redirect == False
     result = ['Homer', 'Simpson']
     assert response.json()[0] == result
 
-def test_post():
+def test_post2():
     payload = {'Winnie': 'Pooh'}
     response = requests.post("http://api:5000/data/add", json=payload)
     assert response.status_code == 204
     assert response.is_redirect == False
 
-def test_select_cache4():
+def test_select_cache5():
     response = requests.get("http://api:5000/cache")
     assert response.status_code == 200
     assert response.is_redirect == False
@@ -73,7 +104,7 @@ def test_select_Winnie():
     assert response.json() == result                                                                                                                                                    
     assert response.is_redirect == False  
 
-def test_select_cache5():                                                                                                                                                                  
+def test_select_cache6():                                                                                                                                                                  
     response = requests.get("http://api:5000/cache")
     assert response.status_code == 200
     assert response.is_redirect == False
@@ -82,7 +113,7 @@ def test_select_cache5():
     sorted_response = sorted(response.json())
     assert sorted_response == sorted_result
 
-def test_select_all2():
+def test_select_all4():
     response = requests.get("http://api:5000/data")
     assert response.status_code == 200
     assert response.is_redirect == False
@@ -114,14 +145,14 @@ def test_delete3():
     assert response.status_code == 405
     assert response.is_redirect == False
 
-def test_select_all3():
+def test_select_all5():
     response = requests.get("http://api:5000/data")
     assert response.status_code == 200
     assert response.is_redirect == False
     result = [['Homer','Simpson'],['Jeffrey','Lebowski'],['Stan','Smith']]
     assert response.json() == result
 
-def test_select_cache6():                                                                                                                                                                  
+def test_select_cache7():                                                                                                                                                                  
     response = requests.get("http://api:5000/cache")
     assert response.status_code == 200
     assert response.is_redirect == False
@@ -153,7 +184,7 @@ def test_select_Homer2():
     assert response.json() == result
     assert response.is_redirect == False
 
-def test_select_all4():
+def test_select_all6():
     response = requests.get("http://api:5000/data")
     assert response.status_code == 200
     assert response.is_redirect == False
@@ -165,7 +196,7 @@ def test_put3():
     assert response.status_code == 204
     assert response.is_redirect == False
 
-def test_select_all5():
+def test_select_all7():
     response = requests.get("http://api:5000/data")
     assert response.status_code == 200
     assert response.is_redirect == False
