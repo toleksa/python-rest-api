@@ -38,11 +38,11 @@ def test_select_cache2():
     assert response.is_redirect == False
 
 def test_select_Homer():
-    response = requests.get("http://api:5000/data?key=Homer")
+    response = requests.get("http://api:5000/data/Homer")
     assert response.status_code == 200
-    assert response.json()[0][1] == "Simpson"
+    assert response.json()[1] == "Simpson"
     result = ['Homer', 'Simpson']
-    assert response.json()[0] == result
+    assert response.json() == result
     assert response.is_redirect == False
 
 def test_select_cache3():
@@ -54,7 +54,7 @@ def test_select_cache3():
 
 def test_post():
     payload = {'Winnie': 'Pooh'}
-    response = requests.post("http://api:5000/data", json=payload)
+    response = requests.post("http://api:5000/data/add", json=payload)
     assert response.status_code == 204
     assert response.is_redirect == False
 
@@ -66,11 +66,11 @@ def test_select_cache4():
     assert response.json()[0] == result
 
 def test_select_Winnie():                                                                                                                                                                  
-    response = requests.get("http://api:5000/data?key=Winnie")                                                                                                                       
+    response = requests.get("http://api:5000/data/Winnie")                                                                                                                       
     assert response.status_code == 200                                                                                                                                                     
-    assert response.json()[0][1] == "Pooh"                                                                                                                                                 
+    assert response.json()[1] == "Pooh"                                                                                                                                                 
     result = ['Winnie', 'Pooh']                                                                                                                                                            
-    assert response.json()[0] == result                                                                                                                                                    
+    assert response.json() == result                                                                                                                                                    
     assert response.is_redirect == False  
 
 def test_select_cache5():                                                                                                                                                                  
@@ -90,18 +90,18 @@ def test_select_all2():
     assert response.json() == result
 
 def test_delete1():
-    response = requests.delete("http://api:5000/data?key=Winnie")
+    response = requests.delete("http://api:5000/data/del/Winnie")
     assert response.status_code == 204
     assert response.is_redirect == False
 
 def test_delete2():
-    response = requests.delete("http://api:5000/data?key=Winnie")
+    response = requests.delete("http://api:5000/data/del/Winnie")
     assert response.status_code == 204
     assert response.is_redirect == False
 
 def test_delete3():
     response = requests.delete("http://api:5000/data")
-    assert response.status_code == 400
+    assert response.status_code == 405
     assert response.is_redirect == False
 
 def test_select_all3():
