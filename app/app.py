@@ -58,8 +58,10 @@ def select_cache():
 
 @app.route('/reset', methods=['GET'])
 def reset():
-    query = f'TRUNCATE TABLE dict'
+    query = 'TRUNCATE TABLE dict'
     cur = conn.cursor()
+    cur.execute(query)
+    query = "INSERT INTO dict (k, v) VALUES ('Homer','Simpson'),('Jeffrey','Lebowski'),('Stan','Smith')"
     cur.execute(query)
     conn.commit()
     keys = red.keys()
