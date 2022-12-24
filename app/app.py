@@ -56,6 +56,17 @@ def select_cache():
         value = res.append((key.decode("utf-8"), red.get(key.decode("utf-8")).decode("utf-8")))
     return res
 
+@app.route('/reset', methods=['GET'])
+def reset():
+    query = f'TRUNCATE TABLE dict'
+    cur = conn.cursor()
+    cur.execute(query)
+    conn.commit()
+    keys = red.keys()
+    for key in keys:
+        red.delete(key)
+    return '', 204
+
 @app.route('/data', methods=['GET'])
 def select_all():
     cur = conn.cursor()
