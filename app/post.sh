@@ -5,5 +5,5 @@ if [ $# -ne 2 ]; then
   exit 1
 fi
 
-curl -X POST -H "Content-Type: application/json" -d "{ \"$1\": \"$2\" }" http://api.kube.ac/data
+curl -X POST -H "Content-Type: application/json" -d "{ \"$1\": \"$2\" }" http://127.0.0.1:5000/data/add
 
