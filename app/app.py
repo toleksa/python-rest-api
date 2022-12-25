@@ -54,7 +54,7 @@ def select_cache():
     keys = red.keys()
     for key in keys:
         value = res.append((key.decode("utf-8"), red.get(key.decode("utf-8")).decode("utf-8")))
-    return res
+    return res, 200, {"Access-Control-Allow-Origin": "*"}
 
 @app.route('/reset', methods=['GET'])
 def reset():
@@ -67,7 +67,7 @@ def reset():
     keys = red.keys()
     for key in keys:
         red.delete(key)
-    return '', 204
+    return '', 204, {"Access-Control-Allow-Origin": "*"}
 
 @app.route('/data', methods=['GET'])
 def select_all():
@@ -80,7 +80,7 @@ def select_all():
     res = []
     for (k, v) in cur:
         res.append((k,v))
-    return jsonify(res)
+    return jsonify(res), 200, {"Access-Control-Allow-Origin": "*"}
 
 @app.route('/data/<key>', methods=['GET'])
 def select(key):
@@ -95,7 +95,7 @@ def select(key):
             red.set(key,value)
     else:
         value = value.decode("utf-8")
-    return jsonify((key, value))
+    return jsonify((key, value)), 200, {"Access-Control-Allow-Origin": "*"}
 
 @app.route('/data/add', methods=['POST'])
 def insert():
@@ -108,32 +108,32 @@ def insert():
     except mariadb.Error as e:
       print(f"Error: {e}")
     conn.commit()
-  return '', 204
+  return '', 204, {"Access-Control-Allow-Origin": "*"}
 
 @app.route('/data/put/<key>/value/<value>', methods=['PUT'])
 def update(key,value):
     if key is None or value is None:
-        return '', 400
+        return '', 400, {"Access-Control-Allow-Origin": "*"}
     query = f'UPDATE dict set v="{value}" WHERE k="{key}"'
     cur = conn.cursor()
     cur.execute(query)
     if cur.rowcount == 0:
-        return '', 404
+        return '', 404, {"Access-Control-Allow-Origin": "*"}
     conn.commit()
     red.delete(key)
-    return '', 204
+    return '', 204, {"Access-Control-Allow-Origin": "*"}
 
 @app.route('/data/del/<key>', methods=['DELETE'])
 def delete(key):
     if key is None:
-        return '', 400
+        return '', 400, {"Access-Control-Allow-Origin": "*"}
     query = f'DELETE FROM dict WHERE k="{key}"'
     cur = conn.cursor()
     cur.execute(query)
     red.delete(key)
-    return '', 204
+    return '', 204, {"Access-Control-Allow-Origin": "*"}
 
 @app.route('/health')
 def health():
-  return '', 200
+  return '', 200, {"Access-Control-Allow-Origin": "*"}
 
