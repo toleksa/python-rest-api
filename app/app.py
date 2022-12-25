@@ -108,6 +108,8 @@ def insert():
   for k in request.get_json():
     v = request.get_json()[k]
     print("request: ", k, " : ", v)
+    if k == "":
+        return '', 400
     cur = conn.cursor()
     try:
       cur.execute("INSERT INTO dict (k,v) VALUES (?, ?) ON DUPLICATE KEY UPDATE v=?", (k,v,v))
