@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, redirect
+from flask_cors import CORS
 import mariadb
 import redis
 import sys
@@ -6,6 +7,7 @@ import os
 import time
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 red = redis.Redis(host=os.environ['REDIS_HOST'], port=6379, db=0)
 attempts=1
@@ -54,7 +56,7 @@ def select_cache():
     keys = red.keys()
     for key in keys:
         value = res.append((key.decode("utf-8"), red.get(key.decode("utf-8")).decode("utf-8")))
-    return res, 200, {"Access-Control-Allow-Origin": "*"}
+    return res, 200
 
 @app.route('/reset', methods=['GET'])
 def reset():
@@ -67,7 +69,7 @@ def reset():
     keys = red.keys()
     for key in keys:
         red.delete(key)
-    return '', 204, {"Access-Control-Allow-Origin": "*"}
+    return '', 204
 
 @app.route('/data', methods=['GET'])
 def select_all():
@@ -80,7 +82,11 @@ def select_all():
     res = []
     for (k, v) in cur:
         res.append((k,v))
-    return jsonify(res), 200, {"Access-Control-Allow-Origin": "*"}
+    return jsonify(res), 200
+
+@app.route('/data', methods=['OPTIONS'])
+def options():
+    return '', 200
 
 @app.route('/data/<key>', methods=['GET'])
 def select(key):
@@ -95,7 +101,7 @@ def select(key):
             red.set(key,value)
     else:
         value = value.decode("utf-8")
-    return jsonify((key, value)), 200, {"Access-Control-Allow-Origin": "*"}
+    return jsonify((key, value)), 200
 
 @app.route('/data/add', methods=['POST'])
 def insert():
@@ -108,7 +114,7 @@ def insert():
     except mariadb.Error as e:
       print(f"Error: {e}")
     conn.commit()
-  return '', 204, {"Access-Control-Allow-Origin": "*"}
+  return '', 204
 
 @app.route('/data/put/<key>/value/<value>', methods=['PUT'])
 def update(key,value):
@@ -118,22 +124,22 @@ def update(key,value):
     cur = conn.cursor()
     cur.execute(query)
     if cur.rowcount == 0:
-        return '', 404, {"Access-Control-Allow-Origin": "*"}
+        return '', 404
     conn.commit()
     red.delete(key)
-    return '', 204, {"Access-Control-Allow-Origin": "*"}
+    return '', 204
 
 @app.route('/data/del/<key>', methods=['DELETE'])
 def delete(key):
     if key is None:
-        return '', 400, {"Access-Control-Allow-Origin": "*"}
+        return '', 400
     query = f'DELETE FROM dict WHERE k="{key}"'
     cur = conn.cursor()
     cur.execute(query)
     red.delete(key)
-    return '', 204, {"Access-Control-Allow-Origin": "*"}
+    return '', 204
 
 @app.route('/health')
 def health():
-  return '', 200, {"Access-Control-Allow-Origin": "*"}
+  return '', 200
 
