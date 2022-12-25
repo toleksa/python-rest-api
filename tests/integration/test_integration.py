@@ -18,6 +18,10 @@ def test_server_404():
     assert response.status_code == 404
     assert response.is_redirect == False
 
+def test_CORS_header():
+    response = requests.get("http://api:5000/data")
+    assert "Access-Control-Allow-Origin" in response.headers
+
 def test_reset1():
     response = requests.get("http://api:5000/reset")
     assert response.status_code == 204
