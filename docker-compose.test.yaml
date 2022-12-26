@@ -7,7 +7,7 @@ services:
     container_name: python-rest-api-test
     entrypoint: tail -f /dev/null
     volumes:
-      - ${PWD}/tests/integration/test_integration.py:/pytest/test_integration_mount.py:Z
+      - ${PWD}/tests/integration:/pytest:Z
     environment:
       - API_URL=http://api:5000
   db:
