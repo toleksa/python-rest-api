@@ -46,6 +46,9 @@ data:
       - `hostname -I | awk '{print $1"-"$1}'`
 EOF
 
+#TODO: workaround for: kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission
+kubectl delete -A ValidatingWebhookConfiguration rke2-ingress-nginx-admission
+
 echo "deploying app"
 kubectl create ns python-rest-api
 kubectl -n python-rest-api create secret generic mariadb --from-literal=mariadb-password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 12 | base64) --from-literal=mariadb-root-password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 12 | base64)
