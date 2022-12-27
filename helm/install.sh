@@ -42,6 +42,9 @@ configInline:
     - `hostname -I | awk '{print $1"/32"}'`
 EOF
 
+#TODO: workaround for: kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission
+kubectl delete -A ValidatingWebhookConfiguration rke2-ingress-nginx-admission
+
 helm install --create-namespace --namespace python-rest-api mariadb bitnami/mariadb -f mariadb-values.yaml
 sed -e "s/example.com/`hostname -f`/" python-rest-api-values.yaml | helm install --create-namespace --namespace python-rest-api python-rest-api ./python-rest-api -f -
 
