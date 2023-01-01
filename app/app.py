@@ -11,7 +11,7 @@ import time
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
-total_requests = Counter('total_requests', 'Total requests counter')
+requests = Counter('total_requests', 'Total requests counter', ['endpoint', 'method'])
 
 red = redis.Redis(host=os.environ['REDIS_HOST'], port=6379, db=0)
 attempts=1
@@ -55,13 +55,14 @@ app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
     '/metrics': make_wsgi_app()
 })
 
-def count_total_requests(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        print("anal")
-        total_requests.inc()
-        return func(*args, **kwargs)
-    return wrapper
+def count_requests(endpoint, method):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            requests.labels(endpoint, method).inc()
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
 
 @app.route('/')
 def go_to_data():
@@ -89,7 +90,7 @@ def reset():
     return '', 204
 
 @app.route('/data', methods=['GET'])
-@count_total_requests
+@count_requests('/data', 'GET')
 def select_all():
     cur = conn.cursor()
     query = "SELECT * from dict"
