@@ -1,5 +1,8 @@
 from flask import Flask, jsonify, request, redirect
+from prometheus_client import make_wsgi_app, Counter
 from flask_cors import CORS
+from functools import wraps
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
 import mariadb
 import redis
 import sys
@@ -8,6 +11,7 @@ import time
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
+total_requests = Counter('total_requests', 'Total requests counter')
 
 red = redis.Redis(host=os.environ['REDIS_HOST'], port=6379, db=0)
 attempts=1
@@ -46,6 +50,19 @@ while True:
         sys.exit(1)
     time.sleep(3)
 
+# Add prometheus wsgi middleware to route /metrics requests
+app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
+    '/metrics': make_wsgi_app()
+})
+
+def count_total_requests(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        print("anal")
+        total_requests.inc()
+        return func(*args, **kwargs)
+    return wrapper
+
 @app.route('/')
 def go_to_data():
     return redirect("/data", code=302)
@@ -72,6 +89,7 @@ def reset():
     return '', 204
 
 @app.route('/data', methods=['GET'])
+@count_total_requests
 def select_all():
     cur = conn.cursor()
     query = "SELECT * from dict"
