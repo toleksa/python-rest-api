@@ -1,3 +1,4 @@
+from prometheus_client.parser import text_string_to_metric_families
 import requests, json
 import os
 
@@ -216,4 +217,21 @@ def test_select_all7():
     assert response.is_redirect == False
     result = [['Homer','Simpson'],['Jeffrey','Lebowski'],['Stan','Smith']]
     assert response.json() == result
+
+def test_metrics1():
+    response = requests.get(os.environ['API_URL'] + "/metrics")
+    assert response.status_code == 200
+    assert response.is_redirect == False
+    assert "requests_total" in response.content.decode()
+    assert "responses_total" in response.content.decode()
+    metrics = text_string_to_metric_families(response.content.decode())
+    for metric in metrics:
+        #print("Metric name: ", metric.name)
+        for sample in metric.samples:
+            #print("\tSample: ", sample.name, sample.labels, sample.value)
+            if sample.name == "requests_total" and sample.labels == {'endpoint': '/data', 'method': 'GET'}:
+                assert sample.value == 9
+            if sample.name == "responses_total" and sample.labels == {'endpoint': '/data/del/Winnie', 'status_code': '204'}:
+                assert sample.value == 2
+
 
