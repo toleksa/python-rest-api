@@ -11,7 +11,8 @@ import time
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
-requests = Counter('requests', 'Total requests counter', ['endpoint', 'method'])
+requests = Counter('requests', 'Requests metric', ['endpoint', 'method'])
+responses = Counter('responses', 'Responses metric', ['endpoint', 'status_code'])
 
 red = redis.Redis(host=os.environ['REDIS_HOST'], port=6379, db=0)
 attempts=1
@@ -58,6 +59,11 @@ app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
 @app.before_request
 def before_request():
     requests.labels(request.path, request.method).inc()
+
+@app.after_request
+def after_request(response):
+    responses.labels(request.path, response.status_code).inc()
+    return response
 
 @app.route('/')
 def go_to_data():
