@@ -55,12 +55,9 @@ app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
     '/metrics': make_wsgi_app()
 })
 
-def count_requests(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        requests.labels(request.path, request.method).inc()
-        return func(*args, **kwargs)
-    return wrapper
+@app.before_request
+def before_request():
+    requests.labels(request.path, request.method).inc()
 
 @app.route('/')
 def go_to_data():
@@ -88,7 +85,6 @@ def reset():
     return '', 204
 
 @app.route('/data', methods=['GET'])
-@count_requests
 def select_all():
     cur = conn.cursor()
     query = "SELECT * from dict"
