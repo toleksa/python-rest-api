@@ -11,7 +11,7 @@ import time
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
-requests = Counter('total_requests', 'Total requests counter', ['endpoint', 'method'])
+requests = Counter('requests', 'Total requests counter', ['endpoint', 'method'])
 
 red = redis.Redis(host=os.environ['REDIS_HOST'], port=6379, db=0)
 attempts=1
