@@ -2,7 +2,7 @@ import requests, json
 import os
 
 def test_API_URL():
-    API_URL=os.environ['API_URL']
+    API_URL=os.environ['API_URL'] #example: http://127.0.0.1:8000
     assert API_URL is not None
 
 # methods in requests object:
