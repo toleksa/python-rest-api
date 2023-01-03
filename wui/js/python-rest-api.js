@@ -2,7 +2,7 @@ $(function () {
 
   function reload_table() {
     $.ajax({
-      url: "http://192.168.1.6:5000/data",
+      url: "http://192.168.0.136:5000/data",
       type: 'GET',
       success: function (response) {
         $('#data_table tr').remove()
@@ -20,7 +20,7 @@ $(function () {
     body = JSON.stringify(data)
     console.log(body)
     $.ajax({
-      url: "http://192.168.1.6:5000/data/add",
+      url: "http://192.168.0.136:5000/data/add",
       contentType: "application/json",
       data: body,
       dataType: "json",
