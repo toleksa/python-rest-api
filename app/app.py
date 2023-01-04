@@ -9,6 +9,8 @@ import sys
 import os
 import time
 
+DEBUG=0
+
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 requests = Counter('requests', 'Requests metric', ['endpoint', 'method'])
@@ -58,11 +60,17 @@ app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
 
 @app.before_request
 def before_request():
+    if DEBUG==1:
+        print(request.headers)
+        print(request.path)
+        print(request.url_rule)
     requests.labels(request.path, request.method).inc()
 
 @app.after_request
 def after_request(response):
     responses.labels(request.path, response.status_code).inc()
+    if DEBUG==1:
+        print(response.headers)
     return response
 
 @app.route('/')
