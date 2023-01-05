@@ -6,6 +6,7 @@ function DictionaryTable() {
   const [delEntry, setDelEntry] = useState([]);
 
   useEffect(() => {
+    // TODO: request is sent twice on refresh
     axios.get('http://192.168.0.136:5000/data')
       .then(response => setData(response.data))
   }, []);
