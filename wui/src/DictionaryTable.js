@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const API_URL = 'http://192.168.0.136:5000';
+
 function DictionaryTable() {
   const [data, setData] = useState([]);
   const [delEntry, setDelEntry] = useState([]);
 
   useEffect(() => {
     // TODO: request is sent twice on refresh
-    axios.get('http://192.168.0.136:5000/data')
+    axios.get(`${API_URL}/data`)
       .then(response => setData(response.data))
   }, []);
 
   const delEntryFn = async (delEntry) => {
     try {
       console.log(delEntry)
-      await axios.delete(`http://192.168.0.136:5000/data/del/${delEntry}`);
+      await axios.delete(`${API_URL}/data/del/${delEntry}`);
     } catch (error) {
       console.error(error);
     }
