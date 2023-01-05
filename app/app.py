@@ -13,6 +13,7 @@ DEBUG=0
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
+#cors = CORS(app, resources={r"/*": {"origins": "*", "methods": "GET, POST, PUT, OPTIONS, DELETE"}})
 requests = Counter('requests', 'Requests metric', ['endpoint', 'method'])
 responses = Counter('responses', 'Responses metric', ['endpoint', 'status_code'])
 
@@ -69,6 +70,10 @@ def before_request():
 @app.after_request
 def after_request(response):
     responses.labels(request.path, response.status_code).inc()
+    #TODO: should be handled by CORS above, but doesn't work for OPTIONS request with origin headers
+    #response.headers.add('Access-Control-Allow-Origin', '*')
+    #response.headers.add('Access-Control-Allow-Headers', 'content-type')
+    #response.headers.add('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS, DELETE')
     if DEBUG==1:
         print(response.headers)
     return response
