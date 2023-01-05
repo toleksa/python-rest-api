@@ -5,7 +5,6 @@ const API_URL = 'http://192.168.0.136:5000';
 
 function DictionaryTable() {
   const [data, setData] = useState([]);
-  const [delEntry, setDelEntry] = useState([]);
 
   useEffect(() => {
     // TODO: request is sent twice on refresh
