@@ -116,10 +116,6 @@ def select_all():
         res.append((k,v))
     return jsonify(res), 200
 
-@app.route('/data', methods=['OPTIONS'])
-def options():
-    return '', 200
-
 @app.route('/data/<key>', methods=['GET'])
 def select(key):
     value = red.get(key)
