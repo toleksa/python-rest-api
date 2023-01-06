@@ -54,13 +54,6 @@ def create_connection_pool():
 while True:
     try:
         pool=create_connection_pool()
-        conn2 = mariadb.connect(
-            user=os.environ['DB_USER'],
-            password=os.environ['DB_PASS'],
-            host=os.environ['DB_HOST'],
-            port=3306,
-            database="python_rest_api"
-        )
         conn = pool.get_connection()
         cur = conn.cursor()
         cur.execute("select 1")
