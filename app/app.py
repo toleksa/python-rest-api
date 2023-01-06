@@ -32,21 +32,43 @@ while True:
         sys.exit(1)
     time.sleep(3)
 
-conn=None
+pool=None
 attempts=1
+
+def create_connection_pool():
+    """Creates and returns a Connection Pool"""
+
+    # Create Connection Pool
+    pool = mariadb.ConnectionPool(
+      user=os.environ['DB_USER'],
+      password=os.environ['DB_PASS'],
+      host=os.environ['DB_HOST'],
+      port=3306,
+      database="python_rest_api",
+      pool_name="dict",
+      pool_size=5)
+
+    # Return Connection Pool
+    return pool
 
 while True:
     try:
-        conn = mariadb.connect(
+        pool=create_connection_pool()
+        conn2 = mariadb.connect(
             user=os.environ['DB_USER'],
             password=os.environ['DB_PASS'],
             host=os.environ['DB_HOST'],
             port=3306,
             database="python_rest_api"
         )
+        conn = pool.get_connection()
+        cur = conn.cursor()
+        cur.execute("select 1")
+        cur.close()
+        conn.close()
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
-    if conn is not None:
+    if pool is not None:
         break
     attempts+=1
     if attempts > 5:
@@ -92,12 +114,15 @@ def select_cache():
 
 @app.route('/reset', methods=['GET'])
 def reset():
-    query = 'TRUNCATE TABLE dict'
+    conn = pool.get_connection()
     cur = conn.cursor()
+    query = 'TRUNCATE TABLE dict'
     cur.execute(query)
     query = "INSERT INTO dict (k, v) VALUES ('Homer','Simpson'),('Jeffrey','Lebowski'),('Stan','Smith')"
     cur.execute(query)
     conn.commit()
+    cur.close()
+    conn.close()
     keys = red.keys()
     for key in keys:
         red.delete(key)
@@ -105,6 +130,7 @@ def reset():
 
 @app.route('/data', methods=['GET'])
 def select_all():
+    conn = pool.get_connection()
     cur = conn.cursor()
     query = "SELECT * from dict"
     k =request.args.get('k')
@@ -114,16 +140,21 @@ def select_all():
     res = []
     for (k, v) in cur:
         res.append((k,v))
+    cur.close()
+    conn.close()
     return jsonify(res), 200
 
 @app.route('/data/<key>', methods=['GET'])
 def select(key):
     value = red.get(key)
     if value is None:
-        query = f'SELECT v FROM dict WHERE k="{key}"' 
+        conn = pool.get_connection()
         cur = conn.cursor()
+        query = f'SELECT v FROM dict WHERE k="{key}"' 
         cur.execute(query)
         result = cur.fetchone()
+        cur.close()
+        conn.close()
         if result is not None:
             value = result[0]
             red.set(key,value)
@@ -138,24 +169,30 @@ def insert():
     print("request: ", k, " : ", v)
     if k == "":
         return '', 400
+    conn = pool.get_connection()
     cur = conn.cursor()
     try:
       cur.execute("INSERT INTO dict (k,v) VALUES (?, ?) ON DUPLICATE KEY UPDATE v=?", (k,v,v))
     except mariadb.Error as e:
       print(f"Error: {e}")
     conn.commit()
+    cur.close()
+    conn.close()
   return '', 204
 
 @app.route('/data/put/<key>/value/<value>', methods=['PUT'])
 def update(key,value):
     if key is None or value is None:
         return '', 400, {"Access-Control-Allow-Origin": "*"}
-    query = f'UPDATE dict set v="{value}" WHERE k="{key}"'
+    conn = pool.get_connection()
     cur = conn.cursor()
+    query = f'UPDATE dict set v="{value}" WHERE k="{key}"'
     cur.execute(query)
     if cur.rowcount == 0:
         return '', 404
     conn.commit()
+    cur.close()
+    conn.close()
     red.delete(key)
     return '', 204
 
@@ -163,9 +200,12 @@ def update(key,value):
 def delete(key):
     if key is None:
         return '', 400
-    query = f'DELETE FROM dict WHERE k="{key}"'
+    conn = pool.get_connection()
     cur = conn.cursor()
+    query = f'DELETE FROM dict WHERE k="{key}"'
     cur.execute(query)
+    cur.close()
+    conn.close()
     red.delete(key)
     return '', 204
 
