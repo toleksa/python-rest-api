@@ -9,7 +9,16 @@ import sys
 import os
 import time
 
-DEBUG=0
+DEBUG=os.environ.get('DEBUG',0)
+if DEBUG=="1" or DEBUG=="true" or DEBUG==1:
+    DEBUG=1
+elif DEBUG=="0" or DEBUG=="false" or DEBUG==0:
+    DEBUG=0
+else:
+    print(f"ERR: unrecognized DEBUG={DEBUG} value")
+    exit(1)
+if DEBUG==1:
+    print("Enabled DEBUG")
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
