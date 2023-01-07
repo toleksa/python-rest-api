@@ -117,11 +117,11 @@ def go_to_data():
 
 @app.route('/cache', methods=['GET'])
 def select_cache():
-    res = []
+    result = []
     keys = red.keys()
     for key in keys:
-        value = res.append((key.decode("utf-8"), red.get(key.decode("utf-8")).decode("utf-8")))
-    return res, 200
+        value = result.append((key.decode("utf-8"), red.get(key.decode("utf-8")).decode("utf-8")))
+    return result, 200
 
 @app.route('/reset', methods=['GET'])
 @db_connection
