@@ -139,9 +139,6 @@ def reset(cur):
 @db_connection
 def select_all(cur):
     query = "SELECT * from dict"
-    k =request.args.get('k')
-    if k is not None:
-        query += " WHERE k='" + str(request.args.get('k')) +"'"
     cur.execute(query)
     res = []
     for (k, v) in cur:
