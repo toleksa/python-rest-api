@@ -97,6 +97,20 @@ def after_request(response):
         print(response.headers)
     return response
 
+def db_connection(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        conn = pool.get_connection()
+        cur = conn.cursor()
+        try:
+            result = func(cur, *args, **kwargs)
+            conn.commit()
+        finally:
+            cur.close()
+            conn.close()
+        return result
+    return wrapper
+
 @app.route('/')
 def go_to_data():
     return redirect("/data", code=302)
@@ -110,25 +124,20 @@ def select_cache():
     return res, 200
 
 @app.route('/reset', methods=['GET'])
-def reset():
-    conn = pool.get_connection()
-    cur = conn.cursor()
+@db_connection
+def reset(cur):
     query = 'TRUNCATE TABLE dict'
     cur.execute(query)
     query = "INSERT INTO dict (k, v) VALUES ('Homer','Simpson'),('Jeffrey','Lebowski'),('Stan','Smith')"
     cur.execute(query)
-    conn.commit()
-    cur.close()
-    conn.close()
     keys = red.keys()
     for key in keys:
         red.delete(key)
     return '', 204
 
 @app.route('/data', methods=['GET'])
-def select_all():
-    conn = pool.get_connection()
-    cur = conn.cursor()
+@db_connection
+def select_all(cur):
     query = "SELECT * from dict"
     k =request.args.get('k')
     if k is not None:
@@ -137,21 +146,16 @@ def select_all():
     res = []
     for (k, v) in cur:
         res.append((k,v))
-    cur.close()
-    conn.close()
     return jsonify(res), 200
 
 @app.route('/data/<key>', methods=['GET'])
-def select(key):
+@db_connection
+def select(cur,key):
     value = red.get(key)
     if value is None:
-        conn = pool.get_connection()
-        cur = conn.cursor()
         query = f'SELECT v FROM dict WHERE k="{key}"' 
         cur.execute(query)
         result = cur.fetchone()
-        cur.close()
-        conn.close()
         if result is not None:
             value = result[0]
             red.set(key,value)
@@ -160,49 +164,38 @@ def select(key):
     return jsonify((key, value)), 200
 
 @app.route('/data/add', methods=['POST'])
-def insert():
+@db_connection
+def insert(cur):
   for k in request.get_json():
     v = request.get_json()[k]
     print("request: ", k, " : ", v)
     if k == "":
         return '', 400
-    conn = pool.get_connection()
-    cur = conn.cursor()
     try:
       cur.execute("INSERT INTO dict (k,v) VALUES (?, ?) ON DUPLICATE KEY UPDATE v=?", (k,v,v))
     except mariadb.Error as e:
       print(f"Error: {e}")
-    conn.commit()
-    cur.close()
-    conn.close()
   return '', 204
 
 @app.route('/data/put/<key>/value/<value>', methods=['PUT'])
-def update(key,value):
+@db_connection
+def update(cur,key,value):
     if key is None or value is None:
         return '', 400, {"Access-Control-Allow-Origin": "*"}
-    conn = pool.get_connection()
-    cur = conn.cursor()
     query = f'UPDATE dict set v="{value}" WHERE k="{key}"'
     cur.execute(query)
     if cur.rowcount == 0:
         return '', 404
-    conn.commit()
-    cur.close()
-    conn.close()
     red.delete(key)
     return '', 204
 
 @app.route('/data/del/<key>', methods=['DELETE'])
-def delete(key):
+@db_connection
+def delete(cur,key):
     if key is None:
         return '', 400
-    conn = pool.get_connection()
-    cur = conn.cursor()
     query = f'DELETE FROM dict WHERE k="{key}"'
     cur.execute(query)
-    cur.close()
-    conn.close()
     red.delete(key)
     return '', 204
 
