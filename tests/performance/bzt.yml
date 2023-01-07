@@ -1,7 +1,7 @@
 ---
 execution:
 - concurrency: 5
-  hold-for: 1m
+  hold-for: 10s
   scenario: api
 
 scenarios:
