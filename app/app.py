@@ -48,13 +48,13 @@ def create_connection_pool():
 
     # Create Connection Pool
     pool = mariadb.ConnectionPool(
-      user=os.environ['DB_USER'],
-      password=os.environ['DB_PASS'],
-      host=os.environ['DB_HOST'],
-      port=3306,
-      database="python_rest_api",
-      pool_name="dict",
-      pool_size=5)
+        user=os.environ['DB_USER'],
+        password=os.environ['DB_PASS'],
+        host=os.environ['DB_HOST'],
+        port=3306,
+        database="python_rest_api",
+        pool_name="dict",
+        pool_size=5)
 
     # Return Connection Pool
     return pool
