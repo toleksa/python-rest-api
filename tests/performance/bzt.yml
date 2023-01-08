@@ -1,0 +1,22 @@
+---
+execution:
+- concurrency: 5
+  hold-for: 1m
+  scenario: api
+
+scenarios:
+  api:
+    think-time: 0
+    requests:
+      - http://api:5000/data
+
+reporting:
+- module: final-stats
+  summary: true  # overall samples count and percent of failures
+  percentiles: true  # display average times and percentiles
+  summary-labels: false # provides list of sample labels, status, percentage of completed, avg time and errors
+  failed-labels: false  # provides list of sample labels with failures
+  test-duration: true  # provides test duration
+  dump-xml: bzt-result.xml
+
+

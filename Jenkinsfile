@@ -59,10 +59,10 @@ pipeline {
                 docker.image("mariadb:10.10.2").withRun("-p 3306:3306 --network ${n} --hostname db -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api' -e MARIADB_ROOT_PASSWORD=password --mount type=bind,source=${WORKSPACE}/app/init.sql,target=/docker-entrypoint-initdb.d/init.sql") { c ->
                   docker.image("redis:7.0.5-alpine").withRun("-p 6379:6379 --network ${n} --hostname redis") {
                 	  docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 5000:5000 --network ${n} --hostname api -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e REDIS_HOST=redis") { 
-                  	  pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
-                  	  pytest_integration_image.tag("latest")
-                  	  pytest_integration_image.inside("--network ${n} -e API_URL=http://api:5000") {
-                  	    sh 'counter=1 ; until $(curl --output /dev/null --silent --head --fail http://docker1.kube.ac:5000/health); do if [ "$counter" -gt 30 ]; then echo "ERR: python-rest-api app not ready, exiting" ; exit 1 ; fi ; counter=$((counter+1)) ; printf "." ; sleep 1 ; done ; pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py'
+                  	  	pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
+                  	  	pytest_integration_image.tag("latest")
+                  	  	pytest_integration_image.inside("--network ${n} -e API_URL=http://api:5000") {
+                  	  	  sh 'counter=1 ; until $(curl --output /dev/null --silent --head --fail http://docker1.kube.ac:5000/health); do if [ "$counter" -gt 30 ]; then echo "ERR: python-rest-api app not ready, exiting" ; exit 1 ; fi ; counter=$((counter+1)) ; printf "." ; sleep 1 ; done ; pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py'
                   	  }
                     }
 									}
@@ -76,6 +76,28 @@ pipeline {
             }
           }
         }
+        stage('Performance Test') {
+          steps {
+            script {
+              withDockerNetwork{ n ->
+                docker.image("mariadb:10.10.2").withRun("-p 3306:3306 --network ${n} --hostname db -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api' -e MARIADB_ROOT_PASSWORD=password --mount type=bind,source=${WORKSPACE}/app/init.sql,target=/docker-entrypoint-initdb.d/init.sql") { c ->
+                  docker.image("redis:7.0.5-alpine").withRun("-p 6379:6379 --network ${n} --hostname redis") {
+                    docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 5000:5000 --network ${n} --hostname api -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e REDIS_HOST=redis") {
+		      perftest_image = docker.image("blazemeter/taurus:latest")
+		      perftest_image.inside("--network ${n} --hostname perf --mount type=bind,source=${WORKSPACE}/tests/performance/bzt.yml,target=/bzt-configs/bzt.yml" bzt.yml)
+                    }
+                  }
+                }
+              }
+            }
+          }
+          post {
+            always {
+              junit 'bzt-result.xml'
+            }
+          }
+        }
+
         stage('Security Test') {
         // requires Jenkins plugin https://plugins.jenkins.io/warnings-ng/
           steps {
