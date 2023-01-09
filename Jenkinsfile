@@ -90,11 +90,11 @@ pipeline {
               }
             }
           }
-          post {
-            always {
-              //junit 'bzt-result.xml'
-            }
-          }
+          //post {
+          //  always {
+          //    junit 'bzt-result.xml'
+          //  }
+          //}
         }
 
         stage('Security Test') {
