@@ -84,7 +84,7 @@ pipeline {
                   docker.image("redis:7.0.5-alpine").withRun("-p 6379:6379 --network ${n} --hostname redis") {
                     docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 5000:5000 --network ${n} --hostname api -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e REDIS_HOST=redis") {
 		      perf = docker.image("blazemeter/taurus:latest").withRun("--network ${n} --hostname perf --mount type=bind,source=${WORKSPACE}/tests/performance/bzt.yml,target=/bzt-configs/bzt.yml","bzt.yml"){
-			sh 'hostname`
+			sh 'hostname'
 		      }
                     }
                   }
