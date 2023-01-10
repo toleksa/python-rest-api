@@ -83,7 +83,7 @@ pipeline {
                 docker.image("mariadb:10.10.2").withRun("-p 3306:3306 --network ${n} --hostname db -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api' -e MARIADB_ROOT_PASSWORD=password --mount type=bind,source=${WORKSPACE}/app/init.sql,target=/docker-entrypoint-initdb.d/init.sql") { c ->
                   docker.image("redis:7.0.5-alpine").withRun("-p 6379:6379 --network ${n} --hostname redis") {
                     docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 5000:5000 --network ${n} --hostname api -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e REDIS_HOST=redis") {
-		      docker.image("blazemeter/taurus:latest").inside("--network ${n} --hostname perf --mount type=bind,source=${WORKSPACE}/tests/performance/bzt.yml,target=/bzt-configs/bzt.yml","bzt.yml"){
+		      docker.image("blazemeter/taurus:latest").withRun("--network ${n} --hostname perf --mount type=bind,source=${WORKSPACE}/tests/performance/bzt.yml,target=/bzt-configs/bzt.yml","bzt.yml"){ cc ->
 			  sh 'hostname ; sleep 30s ; find / -name bzt-result.xml 2>/dev/null ; find / -name bzt-junit.xml 2>/dev/null ; sleep 10h'
 		      }
                     }
