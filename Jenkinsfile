@@ -84,7 +84,7 @@ pipeline {
                   docker.image("redis:7.0.5-alpine").withRun("-p 6379:6379 --network ${n} --hostname redis") {
                     docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 5000:5000 --network ${n} --hostname api -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e REDIS_HOST=redis") {
 		      docker.image("blazemeter/taurus:latest").inside("--network ${n} --hostname perf -u 0:0 --entrypoint=''"){ cc ->
-			  sh 'bzt tests/performance/bzt.yml'
+			  sh 'bzt tests/performance/bzt.yml ; ls -ltr /var/lib/jenkins/workspace/python-rest-api'
 		      }
                     }
                   }
@@ -94,7 +94,7 @@ pipeline {
           }
           post {
             always {
-              junit 'bzt-results.xml'
+              junit 'bzt-junit.xml'
             }
           }
         }
