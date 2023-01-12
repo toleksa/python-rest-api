@@ -18,5 +18,8 @@ reporting:
   failed-labels: false  # provides list of sample labels with failures
   test-duration: true  # provides test duration
   dump-xml: /var/lib/jenkins/workspace/python-rest-api/bzt-result.xml
-  dump-junit: /var/lib/jenkins/workspace/python-rest-api/bzt-junit.xml
+  dump-csv: bzt-result.csv
 
+- module: junit-xml
+  filename: /var/lib/jenkins/workspace/python-rest-api/bzt-junit.xml
+  data-source: api
