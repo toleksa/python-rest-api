@@ -94,7 +94,7 @@ pipeline {
           }
           post {
             always {
-              junit 'bzt-junit.xml'
+              junit 'bzt-result.xml'
             }
           }
         }
