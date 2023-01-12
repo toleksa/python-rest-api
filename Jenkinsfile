@@ -95,7 +95,6 @@ pipeline {
           post {
             always {
 	      perfReport 'bzt-result.xml'
-              junit 'bzt-junit.xml'
             }
           }
         }
