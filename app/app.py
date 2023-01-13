@@ -25,7 +25,7 @@ cors = CORS(app, resources={r"/*": {"origins": "*"}})
 requests = Counter('requests', 'Requests metric', ['endpoint', 'method'])
 responses = Counter('responses', 'Responses metric', ['endpoint', 'status_code'])
 
-red = redis.Redis(host=os.environ['REDIS_HOST'], port=6379, db=0)
+red = redis.Redis(host=os.environ['REDIS_HOST'], port=os.environ['REDIS_PORT'], db=0)
 attempts=1
 
 while True:
@@ -51,7 +51,7 @@ def create_connection_pool():
         user=os.environ['DB_USER'],
         password=os.environ['DB_PASS'],
         host=os.environ['DB_HOST'],
-        port=3306,
+        port=os.environ['DB_PORT'],
         database="python_rest_api",
         pool_name="dict",
         pool_size=5)

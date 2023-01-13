@@ -8,7 +8,7 @@ scenarios:
   api:
     think-time: 0
     requests:
-      - http://api:5000/data
+      - ${API_URL}/data
 
 reporting:
 - module: final-stats
