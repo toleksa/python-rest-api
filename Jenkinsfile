@@ -13,7 +13,11 @@ pipeline {
     environment {                                                                                                                                                                          
         IMAGE = "toleksa/${JOB_NAME}"                                                                                                                                                      
         CREDENTIALS = credentials('dockerhub')                                                                                                                                             
-        SUBDIR = "."                                                                                                                                                         
+        SUBDIR = "."     
+        DB_PORT=3306
+        REDIS_PORT=6379
+        API_PORT=5000
+        API_URL="http://api:${API_PORT}"                                                                                                                                                    
     }                                                                                                                                                                                      
     agent{                                                                                                                                                                                 
         label ''                                                                                                                                                                           
@@ -56,12 +60,12 @@ pipeline {
           steps {
             script {
               withDockerNetwork{ n ->
-                docker.image("mariadb:latest").withRun("-p 3306:3306 --network ${n} --hostname db -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api' -e MARIADB_ROOT_PASSWORD=password --mount type=bind,source=${WORKSPACE}/app/init.sql,target=/docker-entrypoint-initdb.d/init.sql") { c ->
-                  docker.image("redis:alpine").withRun("-p 6379:6379 --network ${n} --hostname redis") {
-                	  docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 5000:5000 --network ${n} --hostname api -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e DB_PORT=3306 -e REDIS_HOST=redis -e REDIS_PORT=6379 -e API_PORT=5000") { 
+                docker.image("mariadb:latest").withRun("-p ${DB_PORT}:3306 --network ${n} --hostname db -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api' -e MARIADB_ROOT_PASSWORD=password --mount type=bind,source=${WORKSPACE}/app/init.sql,target=/docker-entrypoint-initdb.d/init.sql") { c ->
+                  docker.image("redis:alpine").withRun("-p ${REDIS_PORT}:6379 --network ${n} --hostname redis") {
+                	  docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --hostname api -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e REDIS_HOST=redis -e REDIS_PORT=${REDIS_PORT} -e API_PORT=${API_PORT}") { 
                   	  	pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
                   	  	pytest_integration_image.tag("latest")
-                  	  	pytest_integration_image.inside("--network ${n} -e API_URL=http://api:5000") {
+                  	  	pytest_integration_image.inside("--network ${n} -e API_URL=${API_URL}") {
                   	  	  sh 'counter=1 ; until $(curl --output /dev/null --silent --head --fail $API_URL/health); do if [ "$counter" -gt 30 ]; then echo "ERR: python-rest-api app not ready, exiting" ; exit 1 ; fi ; counter=$((counter+1)) ; printf "." ; sleep 1 ; done ; pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py'
                   	  }
                     }
@@ -80,11 +84,11 @@ pipeline {
           steps {
             script {
               withDockerNetwork{ n ->
-                docker.image("mariadb:latest").withRun("-p 3306:3306 --network ${n} --hostname db -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api' -e MARIADB_ROOT_PASSWORD=password --mount type=bind,source=${WORKSPACE}/app/init.sql,target=/docker-entrypoint-initdb.d/init.sql") { c ->
-                  docker.image("redis:alpine").withRun("-p 6379:6379 --network ${n} --hostname redis") {
-                    docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 5000:5000 --network ${n} --hostname api -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e DB_PORT=3306 -e REDIS_HOST=redis -e REDIS_PORT=6379 -e API_PORT=5000") {
-		      docker.image("blazemeter/taurus:latest").inside("--network ${n} --hostname perf -u 0:0 --entrypoint='' -e API_URL=http://api:5000"){ cc ->
-			  sh 'bzt -o settings.env.API_URL=http://api:5000 tests/performance/bzt.yml ; ls -ltr /var/lib/jenkins/workspace/python-rest-api'
+                docker.image("mariadb:latest").withRun("-p ${DB_PORT}:3306 --network ${n} --hostname db -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api' -e MARIADB_ROOT_PASSWORD=password --mount type=bind,source=${WORKSPACE}/app/init.sql,target=/docker-entrypoint-initdb.d/init.sql") { c ->
+                  docker.image("redis:alpine").withRun("-p ${REDIS_PORT}:6379 --network ${n} --hostname redis") {
+                    docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --hostname api -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e REDIS_HOST=redis -e REDIS_PORT=${REDIS_PORT} -e API_PORT=${API_PORT}") {
+		      docker.image("blazemeter/taurus:latest").inside("--network ${n} --hostname perf -u 0:0 --entrypoint='' -e API_URL=${API_URL}"){ cc ->
+			  sh 'bzt -o settings.env.API_URL=${API_URL} tests/performance/bzt.yml ; ls -ltr /var/lib/jenkins/workspace/python-rest-api'
 		      }
                     }
                   }
