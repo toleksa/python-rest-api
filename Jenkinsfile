@@ -84,7 +84,7 @@ pipeline {
                   docker.image("redis:alpine").withRun("-p 6379:6379 --network ${n} --hostname redis") {
                     docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p 5000:5000 --network ${n} --hostname api -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e DB_PORT=3306 -e REDIS_HOST=redis -e REDIS_PORT=6379 -e API_PORT=5000") {
 		      docker.image("blazemeter/taurus:latest").inside("--network ${n} --hostname perf -u 0:0 --entrypoint='' -e API_URL=http://api:5000"){ cc ->
-			  sh 'bzt tests/performance/bzt.yml ; ls -ltr /var/lib/jenkins/workspace/python-rest-api'
+			  sh 'bzt -o settings.env.API_URL=http://api:5000 tests/performance/bzt.yml ; ls -ltr /var/lib/jenkins/workspace/python-rest-api'
 		      }
                     }
                   }
