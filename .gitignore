@@ -2,8 +2,6 @@ __pycache__
 .idea
 *.swp
 ticket.txt
-tests/performance/bzt-junit.xml
-tests/performance/bzt-result.csv
 tests/performance/bzt-result.xml
 tests/performance/jmeter.log
 tests/performance/test.yml
