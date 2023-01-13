@@ -1,4 +1,8 @@
 ---
+settings:
+  env:
+    API_URL=${API_URL}
+
 execution:
 - concurrency: 5
   hold-for: 10s
