@@ -14,9 +14,9 @@ pipeline {
         IMAGE = "toleksa/${JOB_NAME}"                                                                                                                                                      
         CREDENTIALS = credentials('dockerhub')                                                                                                                                             
         SUBDIR = "."     
-        DB_PORT=3306
-        REDIS_PORT=6379
-        API_PORT=5000
+        DB_PORT=13306
+        REDIS_PORT=16379
+        API_PORT=15000
         API_URL="http://api:${API_PORT}"                                                                                                                                                    
     }                                                                                                                                                                                      
     agent{                                                                                                                                                                                 
