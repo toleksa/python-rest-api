@@ -1,7 +1,7 @@
 ---
 settings:
   env:
-    API_URL=http://false_url
+    API_URL=http://api:5000
 
 execution:
 - concurrency: 5
