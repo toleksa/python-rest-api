@@ -53,13 +53,20 @@ pipeline {
           steps {
             script {
               withDockerNetwork{ n ->
-                docker.image("mariadb:latest").withRun("-p ${DB_PORT}:${DB_PORT} --network ${n} --hostname db -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api' -e MARIADB_ROOT_PASSWORD=password --mount type=bind,source=${WORKSPACE}/app/init.sql,target=/docker-entrypoint-initdb.d/init.sql","--port ${DB_PORT}") { c ->
+                docker.image("mariadb:latest").withRun("-p ${DB_PORT}:${DB_PORT} --network ${n} --hostname db -e MARIADB_PASSWORD='password' \
+                    -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api' -e MARIADB_ROOT_PASSWORD=password \
+                    --mount type=bind,source=${WORKSPACE}/app/init.sql,target=/docker-entrypoint-initdb.d/init.sql","--port ${DB_PORT}") { c ->
                   docker.image("redis:alpine").withRun("-p ${REDIS_PORT}:${REDIS_PORT} --network ${n} --hostname redis","redis-server --port ${REDIS_PORT}") {
-                	  docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --hostname api -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e REDIS_HOST=redis -e REDIS_PORT=${REDIS_PORT} -e API_PORT=${API_PORT}") { 
-                  	  	pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
-                  	  	pytest_integration_image.tag("latest")
-                  	  	pytest_integration_image.inside("--network ${n} -e API_URL=${API_URL}") {
-                  	  	  sh 'counter=1 ; until $(curl --output /dev/null --silent --head --fail $API_URL/health); do if [ "$counter" -gt 30 ]; then echo "ERR: python-rest-api app not ready, exiting" ; exit 1 ; fi ; counter=$((counter+1)) ; printf "." ; sleep 1 ; done ; pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py'
+                	  docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --hostname api -e DB_PASS=password \
+                        -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e REDIS_HOST=redis -e REDIS_PORT=${REDIS_PORT} -e API_PORT=${API_PORT}") { 
+                  	  pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
+                  	  pytest_integration_image.tag("latest")
+                  	  pytest_integration_image.inside("--network ${n} -e API_URL=${API_URL}") {
+                  	  	sh '''
+                            counter=1 ; until $(curl --output /dev/null --silent --head --fail $API_URL/health); do if [ "$counter" -gt 30 ]; then 
+                            echo "ERR: python-rest-api app not ready, exiting" ; exit 1 ; fi ; counter=$((counter+1)) ; printf "." ; sleep 1 ; done ; 
+                            pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py'
+                        '''
                   	  }
                     }
 									}
@@ -78,12 +85,14 @@ pipeline {
             script {
               withDockerNetwork{ n ->
                 docker.image("mariadb:latest").withRun("-p ${DB_PORT}:${DB_PORT} --network ${n} --hostname db -e MARIADB_PASSWORD='password' \
-                -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api' -e MARIADB_ROOT_PASSWORD=password --mount type=bind,source=${WORKSPACE}/app/init.sql,target=/docker-entrypoint-initdb.d/init.sql","--port ${DB_PORT}") { c ->
+                    -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api' -e MARIADB_ROOT_PASSWORD=password \
+                    --mount type=bind,source=${WORKSPACE}/app/init.sql,target=/docker-entrypoint-initdb.d/init.sql","--port ${DB_PORT}") { c ->
                   docker.image("redis:alpine").withRun("-p ${REDIS_PORT}:${REDIS_PORT} --network ${n} --hostname redis","redis-server --port ${REDIS_PORT}") {
-                    docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --hostname api -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e REDIS_HOST=redis -e REDIS_PORT=${REDIS_PORT} -e API_PORT=${API_PORT}") {
-		      docker.image("blazemeter/taurus:latest").inside("--network ${n} --hostname perf -u 0:0 --entrypoint='' -e API_URL=${API_URL}"){ cc ->
-			  sh 'bzt -o settings.env.API_URL=${API_URL} tests/performance/bzt.yml ; ls -ltr /var/lib/jenkins/workspace/python-rest-api'
-		      }
+                    docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --hostname api -e DB_PASS=password \
+                        -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e REDIS_HOST=redis -e REDIS_PORT=${REDIS_PORT} -e API_PORT=${API_PORT}") {
+		                  docker.image("blazemeter/taurus:latest").inside("--network ${n} --hostname perf -u 0:0 --entrypoint='' -e API_URL=${API_URL}"){ cc ->
+			                  sh 'bzt -o settings.env.API_URL=${API_URL} tests/performance/bzt.yml ; ls -ltr /var/lib/jenkins/workspace/python-rest-api'
+		                  }
                     }
                   }
                 }
@@ -124,14 +133,17 @@ pipeline {
         }
         stage('Cleanup'){
             steps{
-                sh '''#!/bin/bash
-                      for IMG in $(docker images | grep "${IMAGE} " | grep -v latest | sort -rnk 2 | tail -n +7 | gawk '{ print $1":"$2 }') ; do docker rmi $IMG ; done
+                sh '''
+                    #!/bin/bash
+                    for IMG in $(docker images | grep "${IMAGE} " | grep -v latest | sort -rnk 2 | tail -n +7 | gawk '{ print $1":"$2 }') ; do docker rmi $IMG ; done
                 '''
-                sh '''#!/bin/bash
-                      for IMG in $(docker images | grep "${IMAGE}-pytest-integration " | grep -v latest | sort -rnk 2 | tail -n +7 | gawk '{ print $1":"$2 }') ; do docker rmi $IMG ; done
+                sh '''
+                    #!/bin/bash
+                    for IMG in $(docker images | grep "${IMAGE}-pytest-integration " | grep -v latest | sort -rnk 2 | tail -n +7 | gawk '{ print $1":"$2 }') ; do docker rmi $IMG ; done
                 '''
-                sh '''#!/bin/bash
-                      for IMG in $(docker images | grep "${IMAGE}-pytest-unit " | grep -v latest | sort -rnk 2 | tail -n +7 | gawk '{ print $1":"$2 }') ; do docker rmi $IMG ; done
+                sh '''
+                    #!/bin/bash
+                    for IMG in $(docker images | grep "${IMAGE}-pytest-unit " | grep -v latest | sort -rnk 2 | tail -n +7 | gawk '{ print $1":"$2 }') ; do docker rmi $IMG ; done
                 '''
                 sh 'docker volume rm $(docker volume ls -qf "dangling=true")'
                 sh 'docker images'
