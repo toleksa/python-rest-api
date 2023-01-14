@@ -22,8 +22,4 @@ reporting:
   failed-labels: false  # provides list of sample labels with failures
   test-duration: true  # provides test duration
   dump-xml: bzt-result.xml
-  dump-csv: bzt-result.csv
 
-- module: junit-xml
-  filename: bzt-junit.xml
-  data-source: sample-labels
