@@ -77,7 +77,8 @@ pipeline {
           steps {
             script {
               withDockerNetwork{ n ->
-                docker.image("mariadb:latest").withRun("-p ${DB_PORT}:${DB_PORT} --network ${n} --hostname db -e MARIADB_PASSWORD='password' -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api' -e MARIADB_ROOT_PASSWORD=password --mount type=bind,source=${WORKSPACE}/app/init.sql,target=/docker-entrypoint-initdb.d/init.sql","--port ${DB_PORT}") { c ->
+                docker.image("mariadb:latest").withRun("-p ${DB_PORT}:${DB_PORT} --network ${n} --hostname db -e MARIADB_PASSWORD='password' \
+                -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api' -e MARIADB_ROOT_PASSWORD=password --mount type=bind,source=${WORKSPACE}/app/init.sql,target=/docker-entrypoint-initdb.d/init.sql","--port ${DB_PORT}") { c ->
                   docker.image("redis:alpine").withRun("-p ${REDIS_PORT}:${REDIS_PORT} --network ${n} --hostname redis","redis-server --port ${REDIS_PORT}") {
                     docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --hostname api -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e REDIS_HOST=redis -e REDIS_PORT=${REDIS_PORT} -e API_PORT=${API_PORT}") {
 		      docker.image("blazemeter/taurus:latest").inside("--network ${n} --hostname perf -u 0:0 --entrypoint='' -e API_URL=${API_URL}"){ cc ->
