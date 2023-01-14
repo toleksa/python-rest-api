@@ -10,6 +10,15 @@ services:
       - ${PWD}/tests/integration:/pytest:Z
     environment:
       - API_URL=http://api:5000
+  perf:
+    image: blazemeter/taurus:latest
+    container_name: python-rest-api-perf
+    entrypoint: ''
+    command: sleep infinity
+    volumes:
+      - ${PWD}/tests/performance:/bzt-configs:Z
+    environment:
+      - API_URL=http://api:5000
   db:
     ports:
       - 3306:3306

@@ -26,5 +26,7 @@ services:
       - DB_PASS=password
       - DB_USER=user
       - DB_HOST=db
+      - DB_PORT=3306
       - REDIS_HOST=redis
+      - REDIS_PORT=6379
 
