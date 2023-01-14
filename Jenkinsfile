@@ -25,6 +25,7 @@ pipeline {
     stages{                                                                                                                                                                                
         stage('Checkout'){                                                                                                                                                                 
             steps{                                                                                                                                                                         
+                sh 'ls -la'
                 git url: 'https://github.com/toleksa/python-rest-api.git', branch: 'main'
                 sh 'ls -la'
                 sh 'cat ${SUBDIR}/Dockerfile'
@@ -130,7 +131,6 @@ pipeline {
         }
         stage('Cleanup'){
             steps{
-                sh 'hostname -f'
                 sh '''#!/bin/bash
                       for IMG in $(docker images | grep "${IMAGE} " | grep -v latest | sort -rnk 2 | tail -n +7 | gawk '{ print $1":"$2 }') ; do docker rmi $IMG ; done
                 '''
