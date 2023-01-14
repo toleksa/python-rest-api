@@ -23,14 +23,6 @@ pipeline {
         label ''                                                                                                                                                                           
     }                                                                                                                                                                                      
     stages{                                                                                                                                                                                
-        stage('Checkout'){                                                                                                                                                                 
-            steps{                                                                                                                                                                         
-                sh 'ls -la'
-                git url: 'https://github.com/toleksa/python-rest-api.git', branch: 'main'
-                sh 'ls -la'
-                sh 'cat ${SUBDIR}/Dockerfile'
-            }                                                                                                                                                                              
-        }
         stage('Build'){                                                                                                                                                                    
             steps{                                                                                                                                                                         
                 script{                                                                                                                                                                    
@@ -142,6 +134,7 @@ pipeline {
                 '''
                 sh 'docker volume rm $(docker volume ls -qf "dangling=true")'
                 sh 'docker images'
+                cleanWs()
             }
         }
 
