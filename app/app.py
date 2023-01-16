@@ -106,7 +106,8 @@ def db_connection(func):
         cur = conn.cursor()
         try:
             result = func(cur, *args, **kwargs)
-            conn.commit()
+            if cur.rowcount > 0:
+                conn.commit()
         finally:
             cur.close()
             conn.close()
