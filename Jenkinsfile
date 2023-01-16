@@ -143,7 +143,7 @@ pipeline {
                     #!/bin/bash
                     for IMG in $(docker images | grep "${IMAGE}-pytest-unit " | grep -v latest | sort -rnk 2 | tail -n +7 | gawk '{ print $1":"$2 }') ; do docker rmi $IMG ; done
                 '''
-                sh 'docker volume rm $(docker volume ls -qf "dangling=true")'
+                //sh 'docker volume rm $(docker volume ls -qf "dangling=true")'
                 sh 'docker images'
                 cleanWs()
             }
