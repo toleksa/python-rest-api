@@ -136,6 +136,8 @@ def reset(cur):
     keys = red.keys()
     for key in keys:
         red.delete(key)
+    requests._metrics.clear()
+    responses._metrics.clear()
     return '', 204
 
 @app.route('/data', methods=['GET'])
