@@ -1,0 +1,11 @@
+---
+service:
+  type: ClusterIP
+  port: 6379
+architecture: standalone
+auth:
+  enabled: false
+master:
+  persistence:
+    enabled: false
+
