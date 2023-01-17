@@ -55,10 +55,16 @@ spec:
               secretKeyRef:
                 name: python-rest-api-mariadb
                 key: mariadb-password
+          - name: API_PORT
+            value: 5000
           - name: DB_HOST
             value: python-rest-api-mariadb
+          - name: DB_PORT
+            value: 3306
           - name: REDIS_HOST
             value: python-rest-api-redis-master
+          - name: REDIS_PORT
+            value: 6379
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
