@@ -33,13 +33,16 @@ echo "installing longhorn"
 helm install --create-namespace --namespace longhorn-system longhorn longhorn/longhorn
 
 echo "installing metallb"
-helm install --create-namespace --namespace metallb-system  metallb bitnami/metallb -f - <<EOF
-configInline:
-  address-pools:
-  - name: default
-    protocol: layer2
-    addresses:
-    - `hostname -I | awk '{print $1"/32"}'`
+helm install --create-namespace --namespace metallb-system metallb bitnami/metallb
+kubectl -n metallb-system apply -f - <<EOF
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: metallb-pool-default
+  namespace: metallb-system
+spec:
+  addresses:
+  - `hostname -I | awk '{print $1"/32"}'`
 EOF
 
 #TODO: workaround for: kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission
