@@ -19,7 +19,7 @@
   <!-- Start your project here-->
   <header>
     <nav class="navbar fixed-top navbar-dark bg-primary">
-      <a class="navbar-brand mr-0 mr-md-2" href="#">python-rest-api-wui</a>
+      <a class="navbar-brand ms-3" href="#">python-rest-api-wui</a>
     </nav>
   </header>
   <main>
@@ -28,9 +28,8 @@
     <div style="height: 100vh">
 
     <table id=data_table border=1></table>
+    <button type="button" id="refresh_btn" class="btn btn-primary mt-2">refresh</button>
     <br>
-    <br>
-    <button type="button" id="refresh_btn" class="btn btn-primary">refresh</button>
     <br>
     <br>
     <form class="w-25">
@@ -43,10 +42,12 @@
           <textarea class="form-control text-monospace" id="value_form" rows="1"
                             placeholder="value" style="font-size: 0.8rem"></textarea>
         </div>
+        <div class="col">
+          <button type="button" id="add_btn" class="btn btn-primary">add</button>
+        </div>
       </div>
     </form>
     <br>
-    <button type="button" id="add_btn" class="btn btn-primary">add</button>
     </div>
     </div>
     </div>
