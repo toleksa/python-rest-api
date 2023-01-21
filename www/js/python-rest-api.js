@@ -16,7 +16,7 @@ $(function () {
       type: 'GET',
       success: function (response) {
         $('#data_table tr').remove()
-        $('#data_table').append('<tr><td>k</td><td>v</td><td>del</td><tr>')
+        $('#data_table').append('<tr><td"><center>k</center></td><td><center>v</center></td><td><center>del</center></td><tr>')
         for(i=0;i<response.length;i++){
           $('#data_table').append('<tr><td>' +  response[i][0] + '</td><td>' + response[i][1] + '</td><td><button type="button" id="del_btn" class="btn btn-secondary btn-sm" data-key="'+response[i][0]+'">del</button></td></tr>');
         }
