@@ -4,7 +4,6 @@ metadata:
   name: {{ include "python-rest-api.fullname" . }}
   labels:
     {{- include "python-rest-api.labels" . | nindent 4 }}
-    - app: {{ include "python-rest-api.fullname" . }}
 spec:
   type: {{ .Values.service.type }}
   ports:
