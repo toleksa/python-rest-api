@@ -8,6 +8,6 @@ spec:
       app: {{ include "python-rest-api.fullname" . }}
   endpoints:
   - interval: 30s
-    port: {{ .Values.service.port }}
+    port: "{{ .Values.service.port }}"
     path: /metrics
 
