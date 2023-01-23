@@ -103,13 +103,16 @@ def db_connection(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         conn = pool.get_connection()
+        if conn == None:
+            pool.reconnect()
+            conn = pool.get_connection()
         cur = conn.cursor()
         try:
             result = func(cur, *args, **kwargs)
-        except Exception as e:
-            print(f"Error connecting to database: {e}. Retrying...")
-            pool.reconnect()
-            result = func(cur, *args, **kwargs)
+        #except Exception as e:
+        #    print(f"Error connecting to database: {e}. Retrying...")
+        #    pool.reconnect()
+        #    result = func(cur, *args, **kwargs)
         finally:
             if cur.rowcount > 0:
                 conn.commit()
