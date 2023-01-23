@@ -108,6 +108,12 @@ def db_connection(func):
             result = func(cur, *args, **kwargs)
             if cur.rowcount > 0:
                 conn.commit()
+        except Exception as e:
+            print(f"Error connecting to database: {e}. Retrying...")
+            pool.reconnect()
+            result = func(cur, *args, **kwargs)
+            if cur.rowcount > 0:
+                conn.commit()
         finally:
             cur.close()
             conn.close()
