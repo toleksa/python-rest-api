@@ -104,6 +104,7 @@ def db_connection(func):
     def wrapper(*args, **kwargs):
         conn = pool.get_connection()
         if conn == None:
+            print("ERR: couldn't get connection from pool, reconnecting...")
             pool.reconnect()
             conn = pool.get_connection()
         cur = conn.cursor()
