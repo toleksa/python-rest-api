@@ -77,8 +77,8 @@ pipeline {
                   	    pytest_integration_image.inside("--network ${n} -e API_URL=${API_URL} -e PROMETHEUS_URL=${PROMETHEUS_URL}") {
                   	  	  sh 'counter=1 ; until $(curl --output /dev/null --silent --head --fail $API_URL/health); do if [ "$counter" -gt 30 ]; then \
                               echo "ERR: python-rest-api app not ready, exiting" ; exit 1 ; fi ; counter=$((counter+1)) ; printf "." ; sleep 1 ; done ; \
-                              pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py \
-                              sleep 15s \
+                              pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py ; \
+                              sleep 15s ; \
                               pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_prometheus_result.xml /pytest/test_prometheus.py'
                         }
                   	  }
