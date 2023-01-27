@@ -27,7 +27,9 @@ pipeline {
         DB_PORT=13306
         REDIS_PORT=16379
         API_PORT=15000
-        API_URL="http://api:${API_PORT}"                                                                                                                                                    
+        API_URL="http://api:${API_PORT}"
+        PROMETHEUS_PORT=19090
+        PROMETHEUS_URL="http://prometheus:${PROMETHEUS_PORT}"
     }                                                                                                                                                                                      
     agent{                                                                                                                                                                                 
         label ''                                                                                                                                                                           
@@ -69,12 +71,16 @@ pipeline {
                   docker.image("redis:alpine").withRun("-p ${REDIS_PORT}:${REDIS_PORT} --network ${n} --hostname redis","redis-server --port ${REDIS_PORT}") {
                 	  docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --hostname api -e DB_PASS=password \
                         -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e REDIS_HOST=redis -e REDIS_PORT=${REDIS_PORT} -e API_PORT=${API_PORT}") { 
-                  	  pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
-                  	  pytest_integration_image.tag("latest")
-                  	  pytest_integration_image.inside("--network ${n} -e API_URL=${API_URL}") {
-                  	  	sh 'counter=1 ; until $(curl --output /dev/null --silent --head --fail $API_URL/health); do if [ "$counter" -gt 30 ]; then \
-                            echo "ERR: python-rest-api app not ready, exiting" ; exit 1 ; fi ; counter=$((counter+1)) ; printf "." ; sleep 1 ; done ; \
-                            pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py'
+                	    docker.image("bitnami/prometheus:latest").withRun("-p ${PROMETHEUS_PORT}:${PROMETHEUS_PORT} --network ${n} --hostname prometheus") {
+                  	    pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
+                  	    pytest_integration_image.tag("latest")
+                  	    pytest_integration_image.inside("--network ${n} -e API_URL=${API_URL} -e PROMETHEUS_URL=${PROMETHEUS_URL}") {
+                  	  	  sh 'counter=1 ; until $(curl --output /dev/null --silent --head --fail $API_URL/health); do if [ "$counter" -gt 30 ]; then \
+                              echo "ERR: python-rest-api app not ready, exiting" ; exit 1 ; fi ; counter=$((counter+1)) ; printf "." ; sleep 1 ; done ; \
+                              pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py \
+                              sleep 15s \
+                              pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_prometheus_result.xml /pytest/test_prometheus.py'
+                        }
                   	  }
                     }
 									}
@@ -85,6 +91,7 @@ pipeline {
           post {
             always {
               junit 'test_integration_result.xml'
+              junit 'test_prometheus_result.xml'
             }
           }
         }
