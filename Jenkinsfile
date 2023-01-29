@@ -72,9 +72,9 @@ pipeline {
                 	  docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --hostname api -e DB_PASS=password \
                         -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e REDIS_HOST=redis -e REDIS_PORT=${REDIS_PORT} -e API_PORT=${API_PORT}") { 
                 	    docker.image("bitnami/prometheus:latest").withRun("-p ${PROMETHEUS_PORT}:${PROMETHEUS_PORT} --network ${n} --hostname prometheus \
-                          --mount type=bind,source=${WORKSPACE}/prometheus/prometheus.yml,target=/opt/bitnami/prometheus/conf/prometheus.yml",\
+                          -v${WORKSPACE}/prometheus/prometheus.yml:target=/opt/bitnami/prometheus/conf/prometheus.yml:Z",\
                           "--web.listen-address='0.0.0.0:${PROMETHEUS_PORT}'") {
-                        sh 'sleep 30s ; docker ps -a ; docker logs `docker ps -a | grep "bitnami/prometheus:latest" | gawk \'{ print \$1 }\'`'
+                        sh 'ls -l ; sleep 30s ; docker ps -a ; docker logs `docker ps -a | grep "bitnami/prometheus:latest" | gawk \'{ print \$1 }\'`'
                   	    pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
                   	    pytest_integration_image.tag("latest")
                   	    pytest_integration_image.inside("--network ${n} -e API_URL=${API_URL} -e PROMETHEUS_URL=${PROMETHEUS_URL}") {
