@@ -72,18 +72,7 @@ pipeline {
                 	  docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --hostname api -e DB_PASS=password \
                         -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e REDIS_HOST=redis -e REDIS_PORT=${REDIS_PORT} -e API_PORT=${API_PORT}") { 
                 	    docker.image("bitnami/prometheus:latest").withRun("-p ${PROMETHEUS_PORT}:${PROMETHEUS_PORT} --network ${n} --hostname prometheus -e API_URL=${API_URL} \
-                          -v ${WORKSPACE}/prometheus/prometheus.yml:/opt/bitnami/prometheus/prometheus.tpl:Z --entrypoint=''","\
-                          sed -e 's@api:5000#@'\$API_URL'@g' prometheus.tpl > prometheus.yml ;\
-                          hostname ;\
-                          cat prometheus.yml ;\
-                          pwd ;\
-                          ls -l /opt/bitnami/prometheus/bin/prometheus ;\
-                          /bin/sh \
-                              --config.file=/opt/bitnami/prometheus/prometheus.yml \
-                              --web.listen-address='0.0.0.0:${PROMETHEUS_PORT}' \
-                              --storage.tsdb.path=/opt/bitnami/prometheus/data \
-                              --web.console.libraries=/opt/bitnami/prometheus/conf/console_libraries \
-                              --web.console.templates=/opt/bitnami/prometheus/conf/consoles") {
+                          -v ${WORKSPACE}/prometheus/prometheus.yml:/opt/bitnami/prometheus/prometheus.tpl:Z --entrypoint=''","hostname") {
                   	    pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
                   	    pytest_integration_image.tag("latest")
                   	    pytest_integration_image.inside("--network ${n} -e API_URL=${API_URL} -e PROMETHEUS_URL=${PROMETHEUS_URL}") {
