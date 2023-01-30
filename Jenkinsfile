@@ -75,6 +75,8 @@ pipeline {
                           -v ${WORKSPACE}/prometheus/prometheus.yml:/opt/bitnami/prometheus/prometheus.tpl:Z --entrypoint=''","\
                           sed -e 's@api:5000#@'\$API_URL'@g' prometheus.tpl > prometheus.yml ;\
                           cat prometheus.yml ;\
+                          pwd ;\
+                          ls -l /opt/bitnami/prometheus/bin/prometheus ;\
                           /opt/bitnami/prometheus/bin/prometheus \
                               --config.file=/opt/bitnami/prometheus/prometheus.yml \
                               --web.listen-address='0.0.0.0:${PROMETHEUS_PORT}' \
