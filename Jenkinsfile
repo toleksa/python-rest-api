@@ -80,7 +80,7 @@ pipeline {
                   	  	  sh 'counter=1 ; until $(curl --output /dev/null --silent --head --fail $API_URL/health); do if [ "$counter" -gt 30 ]; then \
                               echo "ERR: python-rest-api app not ready, exiting" ; exit 1 ; fi ; counter=$((counter+1)) ; printf "." ; sleep 1 ; done ; \
                               pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py ; \
-                              sleep 60s ; echo $PROMETHEUS_URL ; \
+                              sleep 3m ; echo $PROMETHEUS_URL ; \
                               pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_prometheus_result.xml /pytest/test_prometheus.py'
                         }
                   	  }
