@@ -74,10 +74,11 @@ pipeline {
                 	    docker.image("bitnami/prometheus:latest").withRun("-p ${PROMETHEUS_PORT}:${PROMETHEUS_PORT} --network ${n} --hostname prometheus -e API_URL=${API_URL} \
                           -v ${WORKSPACE}/prometheus/prometheus.yml:/opt/bitnami/prometheus/prometheus.tpl:Z --entrypoint=''","\
                           sed -e 's@api:5000#@'\$API_URL'@g' prometheus.tpl > prometheus.yml ;\
+                          hostname ;\
                           cat prometheus.yml ;\
                           pwd ;\
                           ls -l /opt/bitnami/prometheus/bin/prometheus ;\
-                          /opt/bitnami/prometheus/bin/prometheus \
+                          /bin/sh \
                               --config.file=/opt/bitnami/prometheus/prometheus.yml \
                               --web.listen-address='0.0.0.0:${PROMETHEUS_PORT}' \
                               --storage.tsdb.path=/opt/bitnami/prometheus/data \
