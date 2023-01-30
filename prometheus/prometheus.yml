@@ -5,5 +5,5 @@ scrape_configs:
   - job_name: "api"
     static_configs:
       - targets: 
-        - "#API_URL#"
+        - "api:5000"
  
