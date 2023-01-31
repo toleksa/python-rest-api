@@ -1,14 +1,24 @@
 $(function () {
 
+  function del_entry(key){
+    $.ajax({
+      url: "http://192.168.0.136:5000/data/del/"+key,
+      type: 'DELETE',
+      success: function (response) {
+        reload_table()
+      }
+    });
+  }
+
   function reload_table() {
     $.ajax({
       url: "http://192.168.0.136:5000/data",
       type: 'GET',
       success: function (response) {
         $('#data_table tr').remove()
-        $('#data_table').append('<tr><td>k</td><td>v</td><tr>')
+        $('#data_table').append('<tr><td"><center>k</center></td><td><center>v</center></td><td><center>del</center></td><tr>')
         for(i=0;i<response.length;i++){
-          $('#data_table').append( '<tr><td>' +  response[i][0] + '</td><td>' + response[i][1] + '</td></tr>');
+          $('#data_table').append('<tr><td>' +  response[i][0] + '</td><td>' + response[i][1] + '</td><td><button type="button" id="del_btn" class="btn btn-secondary btn-sm" data-key="'+response[i][0]+'">del</button></td></tr>');
         }
       }
     });
@@ -33,6 +43,9 @@ $(function () {
 
   $('#refresh_btn').click( function(){reload_table()} );
   $('#add_btn').click( function(){send_post()} );
+  $(document).on('click', '#del_btn', function(){
+    del_entry($(this).data("key"))
+  });
 
   $(document).ready( function(){reload_table()} );
 });
