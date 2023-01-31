@@ -71,7 +71,7 @@ pipeline {
                   docker.image("redis:alpine").withRun("-p ${REDIS_PORT}:${REDIS_PORT} --network ${n} --hostname redis","redis-server --port ${REDIS_PORT}") {
                 	  docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --hostname api -e DB_PASS=password \
                         -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e REDIS_HOST=redis -e REDIS_PORT=${REDIS_PORT} -e API_PORT=${API_PORT}") { 
-                      sh "sed -e 's@api:5000#@'${API_URL}'@g' prometheus/prometheus.yml > prometheus/jenkins.yml"
+                      sh "sed -e 's@api:5000@'${API_URL}'@g' prometheus/prometheus.yml > prometheus/jenkins.yml"
                 	    docker.image("bitnami/prometheus:latest").withRun("-p ${PROMETHEUS_PORT}:${PROMETHEUS_PORT} --network ${n} --hostname prometheus -e API_URL=${API_URL} \
                           -v ${WORKSPACE}/prometheus/jenkins.yml:/opt/bitnami/prometheus/conf/prometheus.yml:Z","\
                               --config.file=/opt/bitnami/prometheus/conf/prometheus.yml \
