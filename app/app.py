@@ -22,8 +22,8 @@ if DEBUG==1:
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
-requests = Counter('requests', 'Requests metric', ['endpoint', 'method'])
-responses = Counter('responses', 'Responses metric', ['endpoint', 'status_code'])
+requests = Counter('python_rest_api_requests', 'Requests metric', ['endpoint', 'method'])
+responses = Counter('python_rest_api_responses', 'Responses metric', ['endpoint', 'status_code'])
 
 red = redis.Redis(host=os.environ['REDIS_HOST'], port=int(os.environ['REDIS_PORT']), db=0)
 attempts=1
