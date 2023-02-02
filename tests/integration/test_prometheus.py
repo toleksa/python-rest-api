@@ -6,7 +6,7 @@ def test_PROMETHEUS_URL():
     assert PROMETHEUS_URL is not None
 
 def test_prometheus():
-    response = requests.get(os.environ['PROMETHEUS_URL'] + "/api/v1/query?query=responses_total")
+    response = requests.get(os.environ['PROMETHEUS_URL'] + "/api/v1/query?query=python_rest_api_responses_total")
     assert response.status_code == 200
     assert response.is_redirect == False
     results = response.json()['data']['result']
