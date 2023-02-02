@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "python-rest-api.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "python-rest-api.fullname" . }}
+  endpoints:
+  - interval: 30s
+    port: "{{ .Values.service.port }}"
+    path: /metrics
+

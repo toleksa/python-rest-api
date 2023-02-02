@@ -36,6 +36,9 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+labels:
+  - "app: python-rest-api"
+
 service:
   type: ClusterIP
   port: 5000
