@@ -7,6 +7,9 @@ spec:
     matchLabels:
       app.kubernetes.io/instance: {{ include "python-rest-api.fullname" . }}
       app.kubernetes.io/name: {{ include "python-rest-api.fullname" . }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
   endpoints:
   - interval: 30s
     port: "{{ .Values.service.port }}"
