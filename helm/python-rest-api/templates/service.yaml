@@ -3,7 +3,6 @@ kind: Service
 metadata:
   name: {{ include "python-rest-api.fullname" . }}
   labels:
-    app: {{ include "python-rest-api.fullname" . }}
     {{- include "python-rest-api.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
