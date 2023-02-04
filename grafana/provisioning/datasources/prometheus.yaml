@@ -1,6 +1,6 @@
 apiVersion: 1
 datasources:
- - name: Prometheus
+ - name: prometheus
    type: prometheus
    url: ${PROMETHEUS_URL}
    isDefault: true
