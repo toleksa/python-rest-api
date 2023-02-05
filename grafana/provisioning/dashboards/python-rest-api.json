@@ -383,6 +383,7 @@
       "type": "piechart"
     }
   ],
+  "refresh": "30s",
   "schemaVersion": 37,
   "style": "dark",
   "tags": [],
