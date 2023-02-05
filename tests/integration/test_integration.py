@@ -218,6 +218,12 @@ def test_select_all7():
     result = [['Homer','Simpson'],['Jeffrey','Lebowski'],['Stan','Smith']]
     assert response.json() == result
 
+def test_id():
+    response = requests.get(os.environ['API_URL'] + "/id")
+    assert response.status_code == 200
+    assert response.is_redirect == False
+    assert "api_host" in response.json().keys()
+
 def test_metrics1():
     response = requests.get(os.environ['API_URL'] + "/metrics")
     assert response.status_code == 200
