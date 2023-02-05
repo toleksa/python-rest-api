@@ -213,6 +213,6 @@ def id(cur):
   query="select @@hostname;"
   cur.execute(query)
   db_host = cur.fetchone()
-  result = { "api_host": api_host, "db_host": db_host }
+  result = { "api_host": api_host, "db_host": db_host[0] }
   return jsonify(result), 200
 
