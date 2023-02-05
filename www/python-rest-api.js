@@ -2,6 +2,17 @@ $(function () {
 
   const API_URL="http://docker1.kube.ac:5000"
 
+  function get_ids() {
+    $.ajax({
+      url: API_URL+"/id",
+      type: 'GET',
+      success: function (response) {
+        ids="api: " + response['api_host'] + " db: " + response['db_host'];
+        $('#ids').append(document.createTextNode(ids));
+      }
+    });
+  }
+
   function del_entry(key){
     $.ajax({
       url: API_URL+"/data/del/"+key,
@@ -17,8 +28,8 @@ $(function () {
       url: API_URL+"/data",
       type: 'GET',
       success: function (response) {
-        $('#data_table tr').remove()
-        $('#data_table').append('<tr><td"><center>k</center></td><td><center>v</center></td><td><center>del</center></td><tr>')
+        $('#data_table tr').remove();
+        $('#data_table').append('<tr><td"><center>k</center></td><td><center>v</center></td><td><center>del</center></td><tr>');
         for(i=0;i<response.length;i++){
           $('#data_table').append('<tr><td>' +  response[i][0] + '</td><td>' + response[i][1] + '</td><td><button type="button" id="del_btn" class="btn btn-secondary btn-sm" data-key="'+response[i][0]+'">del</button></td></tr>');
         }
@@ -49,5 +60,8 @@ $(function () {
     del_entry($(this).data("key"))
   });
 
-  $(document).ready( function(){reload_table()} );
+  $(document).ready( function(){
+    reload_table(); 
+    get_ids();
+  } );
 });
