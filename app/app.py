@@ -206,3 +206,9 @@ def delete(cur,key):
 def health():
   return '', 200
 
+@app.route('/id')
+def id():
+  api_host = os.uname()[1]
+  result = { "api_host": api_host }
+  return jsonify(result), 200
+
