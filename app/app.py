@@ -207,8 +207,12 @@ def health():
   return '', 200
 
 @app.route('/id')
-def id():
+@db_connection
+def id(cur):
   api_host = os.uname()[1]
-  result = { "api_host": api_host }
+  query="select @@hostname;"
+  cur.execute(query)
+  db_host = cur.fetchone()
+  result = { "api_host": api_host, "db_host": db_host }
   return jsonify(result), 200
 
