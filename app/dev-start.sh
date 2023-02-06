@@ -1,0 +1,4 @@
+#!/bin/bash
+
+REDIS_HOST=127.0.0.1 REDIS_PORT=6379 DB_HOST=127.0.0.1 DB_PORT=3306 API_PORT=5001 DB_USER=user DB_PASS=password ./start.sh
+
