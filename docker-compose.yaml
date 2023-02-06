@@ -30,3 +30,11 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
 
+  prometheus:
+    image: bitnami/prometheus:latest
+    container_name: python-rest-api-prometheus
+    volumes:
+      - ${PWD}/prometheus/prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml:Z
+    ports:
+      - 9090:9090
+

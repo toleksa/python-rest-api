@@ -103,12 +103,13 @@ def db_connection(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         conn = pool.get_connection()
+        conn.auto_reconnect = True
         cur = conn.cursor()
         try:
             result = func(cur, *args, **kwargs)
+        finally:
             if cur.rowcount > 0:
                 conn.commit()
-        finally:
             cur.close()
             conn.close()
         return result

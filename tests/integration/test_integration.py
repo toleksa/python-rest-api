@@ -226,12 +226,9 @@ def test_metrics1():
     assert "responses_total" in response.content.decode()
     metrics = text_string_to_metric_families(response.content.decode())
     for metric in metrics:
-        #print("Metric name: ", metric.name)
         for sample in metric.samples:
-            #print("\tSample: ", sample.name, sample.labels, sample.value)
             if sample.name == "requests_total" and sample.labels == {'endpoint': '/data', 'method': 'GET'}:
                 assert sample.value == 5
             if sample.name == "responses_total" and sample.labels == {'endpoint': '/data/del/Winnie', 'status_code': '204'}:
                 assert sample.value == 2
-
 

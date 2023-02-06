@@ -1,8 +1,10 @@
 $(function () {
 
+  const API_URL="http://docker1.kube.ac:5000"
+
   function del_entry(key){
     $.ajax({
-      url: "http://192.168.0.136:5000/data/del/"+key,
+      url: API_URL+"/data/del/"+key,
       type: 'DELETE',
       success: function (response) {
         reload_table()
@@ -12,7 +14,7 @@ $(function () {
 
   function reload_table() {
     $.ajax({
-      url: "http://192.168.0.136:5000/data",
+      url: API_URL+"/data",
       type: 'GET',
       success: function (response) {
         $('#data_table tr').remove()
@@ -30,7 +32,7 @@ $(function () {
     body = JSON.stringify(data)
     console.log(body)
     $.ajax({
-      url: "http://192.168.0.136:5000/data/add",
+      url: API_URL+"/data/add",
       contentType: "application/json",
       data: body,
       dataType: "json",
