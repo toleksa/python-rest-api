@@ -14,7 +14,7 @@ spec:
     path: 'helm/python-rest-api'
     helm:
       values: |
-        replicaCount: 3
+        replicaCount: "{{ .Values.replicaCount }}"
         ingress:
           enabled: true
           className: ""

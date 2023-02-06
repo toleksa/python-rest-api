@@ -14,7 +14,7 @@ spec:
     path: 'argo/python-rest-api'
     helm:
       values: |
-        replicaCount: 3
+        replicaCount: 1
         domain: example.com
   syncPolicy:
     automated:
