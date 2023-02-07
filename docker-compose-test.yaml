@@ -9,7 +9,8 @@ services:
     volumes:
       - ${PWD}/tests/integration:/pytest:Z
     environment:
-      - API_URL=http://api:5000
+      - API_URL=http://${HOSTNAME}:5000
+      - WWW_URL=http://${HOSTNAME}:8000
   perf:
     image: blazemeter/taurus:latest
     container_name: python-rest-api-perf

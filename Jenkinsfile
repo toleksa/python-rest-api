@@ -21,13 +21,16 @@ void setBuildStatus(String message, String state) {
 
 pipeline {                                                                                                                                                                                 
     environment {                                                                                                                                                                          
-        IMAGE = "toleksa/${JOB_NAME}"                                                                                                                                                      
-        CREDENTIALS = credentials('dockerhub')                                                                                                                                             
-        SUBDIR = "."     
+        IMAGE = "toleksa/${JOB_NAME}"
+        SUBDIR = "."
+        WWW_SUBDIR = "www/"
+        CREDENTIALS = credentials('dockerhub')
         DB_PORT=13306
         REDIS_PORT=16379
         API_PORT=15000
         API_URL="http://api:${API_PORT}"
+        WWW_PORT=18000
+        WWW_URL="http://www:${WWW_PORT}"
         PROMETHEUS_PORT=19090
         PROMETHEUS_URL="http://prometheus:${PROMETHEUS_PORT}"
     }                                                                                                                                                                                      
@@ -38,10 +41,12 @@ pipeline {
         stage('Build'){                                                                                                                                                                    
             steps{                                                                                                                                                                         
                 script{                                                                                                                                                                    
-                    docker_image = docker.build("${IMAGE}:${BUILD_NUMBER}","${SUBDIR}")                                                                                                    
-                    docker_image.tag('latest')                                                                                                                                             
-                }                                                                                                                                                                          
-                sh 'docker images'                                                                                                                                                         
+                    docker_image = docker.build("${IMAGE}:${BUILD_NUMBER}","${SUBDIR}")
+                    docker_image.tag('latest')
+                    docker_image = docker.build("${IMAGE}-www:${BUILD_NUMBER}","${WWW_SUBDIR}")
+                    docker_image.tag('latest')
+                }
+                sh 'docker images'
             }                                                                                                                                                                              
         }  
         stage('Unit Test'){
@@ -73,23 +78,26 @@ pipeline {
                 	  docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --hostname api \
                         -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e REDIS_HOST=redis \
                         -e REDIS_PORT=${REDIS_PORT} -e API_PORT=${API_PORT}") { 
-                      sh "sed -e 's@api:5000@api:'${API_PORT}'@g' prometheus/prometheus.yml |\
-                          sed -e 's@scrape_interval: 15s@scrape_interval: 1s@g' > prometheus/jenkins.yml"
-                	    docker.image("bitnami/prometheus:latest").withRun("-p ${PROMETHEUS_PORT}:${PROMETHEUS_PORT} --network ${n} \
-                          --hostname prometheus -e API_URL=${API_URL} \
-                          -v ${WORKSPACE}/prometheus/jenkins.yml:/opt/bitnami/prometheus/conf/prometheus.yml:Z","\
-                            --config.file=/opt/bitnami/prometheus/conf/prometheus.yml \
-                            --web.listen-address='0.0.0.0:${PROMETHEUS_PORT}' \
-                            --storage.tsdb.path=/opt/bitnami/prometheus/data \
-                            --web.console.libraries=/opt/bitnami/prometheus/conf/console_libraries \
-                            --web.console.templates=/opt/bitnami/prometheus/conf/consoles") {
-                  	    pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
-                  	    pytest_integration_image.tag("latest")
-                  	    pytest_integration_image.inside("--network ${n} -e API_URL=${API_URL} -e PROMETHEUS_URL=${PROMETHEUS_URL}") {
-                  	  	  sh 'counter=1 ; until $(curl --output /dev/null --silent --head --fail $API_URL/health); do if [ "$counter" -gt 30 ]; then \
-                              echo "ERR: python-rest-api app not ready, exiting" ; exit 1 ; fi ; counter=$((counter+1)) ; printf "." ; sleep 1 ; done ; \
-                              pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py ;\
-                              pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_prometheus_result.xml /pytest/test_prometheus.py'
+                   	  docker.image("${IMAGE}-www:${BUILD_NUMBER}").withRun("-p ${WWW_PORT}:${WWW_PORT} --network ${n} --hostname www \
+                          -e WWW_PORT=${WWW_PORT} -e ENV_API_URL=${API_URL} {
+                        sh "sed -e 's@api:5000@api:'${API_PORT}'@g' prometheus/prometheus.yml |\
+                            sed -e 's@scrape_interval: 15s@scrape_interval: 1s@g' > prometheus/jenkins.yml"
+                  	    docker.image("bitnami/prometheus:latest").withRun("-p ${PROMETHEUS_PORT}:${PROMETHEUS_PORT} --network ${n} \
+                            --hostname prometheus -e API_URL=${API_URL} \
+                            -v ${WORKSPACE}/prometheus/jenkins.yml:/opt/bitnami/prometheus/conf/prometheus.yml:Z","\
+                              --config.file=/opt/bitnami/prometheus/conf/prometheus.yml \
+                              --web.listen-address='0.0.0.0:${PROMETHEUS_PORT}' \
+                              --storage.tsdb.path=/opt/bitnami/prometheus/data \
+                              --web.console.libraries=/opt/bitnami/prometheus/conf/console_libraries \
+                              --web.console.templates=/opt/bitnami/prometheus/conf/consoles") {
+                    	    pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
+                    	    pytest_integration_image.tag("latest")
+                    	    pytest_integration_image.inside("--network ${n} -e API_URL=${API_URL} -e PROMETHEUS_URL=${PROMETHEUS_URL} -e WWW_URL=${WWW_URL}") {
+                    	  	  sh 'counter=1 ; until $(curl --output /dev/null --silent --head --fail $API_URL/health); do if [ "$counter" -gt 30 ]; then \
+                                echo "ERR: python-rest-api app not ready, exiting" ; exit 1 ; fi ; counter=$((counter+1)) ; printf "." ; sleep 1 ; done ; \
+                                pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py ;\
+                                pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_prometheus_result.xml /pytest/test_prometheus.py'
+                          }
                         }
                   	  }
                     }
