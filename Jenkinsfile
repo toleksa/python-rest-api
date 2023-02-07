@@ -43,8 +43,8 @@ pipeline {
                 script{                                                                                                                                                                    
                     docker_image = docker.build("${IMAGE}:${BUILD_NUMBER}","${SUBDIR}")
                     docker_image.tag('latest')
-                    docker_image = docker.build("${IMAGE}-www:${BUILD_NUMBER}","${WWW_SUBDIR}")
-                    docker_image.tag('latest')
+                    docker_image_www = docker.build("${IMAGE}-www:${BUILD_NUMBER}","${WWW_SUBDIR}")
+                    docker_image_www.tag('latest')
                 }
                 sh 'docker images'
             }                                                                                                                                                                              
@@ -160,6 +160,8 @@ pipeline {
                     docker.withRegistry( '', 'dockerhub' ) {
                         docker_image.push()
                         docker_image.push('latest')
+                        docker_image_www.push()
+                        docker_image_www.push('latest')
                     }
                 }
             }
