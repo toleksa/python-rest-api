@@ -1,5 +1,5 @@
 server {
-    listen       8000;
+    listen       $WWW_PORT;
     server_name  www;
 
     location / {

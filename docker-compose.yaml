@@ -56,4 +56,5 @@ services:
       - 8000:8000
     environment:
       - ENV_API_URL=http://${HOSTNAME}:5000
+      - WWW_PORT=8000
 
