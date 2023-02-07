@@ -79,7 +79,7 @@ pipeline {
                         -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e REDIS_HOST=redis \
                         -e REDIS_PORT=${REDIS_PORT} -e API_PORT=${API_PORT}") { 
                    	  docker.image("${IMAGE}-www:${BUILD_NUMBER}").withRun("-p ${WWW_PORT}:${WWW_PORT} --network ${n} --hostname www \
-                          -e WWW_PORT=${WWW_PORT} -e ENV_API_URL=${API_URL} {
+                          -e WWW_PORT=${WWW_PORT} -e ENV_API_URL=${API_URL}") {
                         sh "sed -e 's@api:5000@api:'${API_PORT}'@g' prometheus/prometheus.yml |\
                             sed -e 's@scrape_interval: 15s@scrape_interval: 1s@g' > prometheus/jenkins.yml"
                   	    docker.image("bitnami/prometheus:latest").withRun("-p ${PROMETHEUS_PORT}:${PROMETHEUS_PORT} --network ${n} \
