@@ -48,3 +48,12 @@ services:
     environment:
       - PROMETHEUS_URL=http://prometheus:9090
 
+  www:
+    image: toleksa/python-rest-api-www:latest
+    container_name: python-rest-api-www
+    build: www/
+    ports:
+      - 8000:8000
+    environment:
+      - ENV_API_URL=http://${HOSTNAME}:5000
+

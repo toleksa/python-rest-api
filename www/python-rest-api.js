@@ -1,6 +1,11 @@
 $(function () {
 
-  const API_URL="http://docker1.kube.ac:5000"
+  var API_URL="http://docker1.kube.ac:5000"
+  //API_URL="http://python-rest-api.c3.kube.ac"
+
+  if (typeof ENV_API_URL !== 'undefined') {
+    API_URL=ENV_API_URL;
+  }
 
   function get_ids() {
     $.ajax({
@@ -61,6 +66,7 @@ $(function () {
   });
 
   $(document).ready( function(){
+    console.log("API_URL: " + API_URL);
     reload_table(); 
     get_ids();
   } );

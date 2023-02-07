@@ -5,3 +5,4 @@ ticket.txt
 tests/performance/bzt-result.xml
 tests/performance/jmeter.log
 tests/performance/test.yml
+www/api_url.js

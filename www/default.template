@@ -1,0 +1,26 @@
+server {
+    listen       8000;
+    server_name  www;
+
+    location / {
+        autoindex on;
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+
+    location /api_url.js {
+        add_header 'Content-Type' 'application/javascript';
+        default_type application/javascript;
+        return 200 "var ENV_API_URL = '$ENV_API_URL';";
+    }
+
+    location /favicon.ico {
+        root   /usr/share/nginx/html;
+    }
+
+    location /healthz {
+        return 200 "OK";
+        add_header Content-Type text/plain;
+    }
+}
+
