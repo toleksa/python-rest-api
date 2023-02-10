@@ -28,7 +28,7 @@ spec:
                   pathType: Prefix
           tls: []
         monitoring:
-          enabled: "{{ .Values.monitoring.enabled }}"
+          enabled: {{ .Values.monitoring.enabled }}
   syncPolicy:
     automated:
       prune: true
