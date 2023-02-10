@@ -7,5 +7,5 @@ metadata:
   grafana_dashboard: 1
 data:
   config.json: |-
-{{ .Files.Get "python-rest-api.json" | indent 4}}
+{{ .Files.Get "files/python-rest-api.json" | indent 4}}
 {{- end }}
