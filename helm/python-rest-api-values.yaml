@@ -10,3 +10,6 @@ ingress:
         - path: /
           pathType: ImplementationSpecific
   tls: []
+
+monitoring:
+  enabled: true
