@@ -4,7 +4,8 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-dashboard
   namespace: monitoring
-  grafana_dashboard: 1
+  labels:
+    grafana_dashboard: 1
 data:
   config.json: |-
 {{ .Files.Get "files/python-rest-api.json" | indent 4}}
