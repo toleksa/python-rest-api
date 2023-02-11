@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-dashboard
+  name: {{ .Release.Name }}-dashboard2
   namespace: monitoring
   labels:
     grafana_dashboard: 1
