@@ -7,6 +7,8 @@ spec:
   destinations:
   - namespace: python-rest-api
     server: '*'
+  - namespace: monitoring
+    server: '*'
   clusterResourceWhitelist:
   - group: '*'
     kind: '*'
