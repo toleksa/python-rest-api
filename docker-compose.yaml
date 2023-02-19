@@ -49,7 +49,7 @@ services:
       - PROMETHEUS_URL=http://prometheus:9090
 
   www:
-    image: toleksa/python-rest-api-www:latest
+    image: docker.io/toleksa/python-rest-api-www:latest
     container_name: python-rest-api-www
     build: www/
     ports:
