@@ -27,9 +27,9 @@ spec:
             size: 1Gi
 
         metrics:
-          enabled: true
+          enabled: false
           serviceMonitor:
-            enabled: true
+            enabled: false
 
         auth:
           database: python_rest_api
