@@ -5093,7 +5093,7 @@
     "type": "timepicker"
   },
   "timezone": "browser",
-  "title": "MySQL Overview",
+  "title": "python-rest-api-mariadb",
   "uid": "python-rest-api-mariadb",
   "version": 1,
   "weekStart": ""
