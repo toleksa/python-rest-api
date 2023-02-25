@@ -5,8 +5,7 @@
       "label": "prometheus",
       "description": "",
       "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
+      "uid": "prometheus"
     }
   ],
   "__requires": [
