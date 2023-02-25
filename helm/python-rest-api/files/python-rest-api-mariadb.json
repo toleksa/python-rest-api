@@ -5093,8 +5093,8 @@
     "type": "timepicker"
   },
   "timezone": "browser",
-  "title": "MySQL Overview2",
-  "uid": "MQWgroiiz2",
+  "title": "MySQL Overview",
+  "uid": "python-rest-api-mariadb",
   "version": 1,
   "weekStart": ""
 }
