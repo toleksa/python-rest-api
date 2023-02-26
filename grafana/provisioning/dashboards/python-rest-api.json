@@ -24,7 +24,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 27,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -386,7 +385,10 @@
   "refresh": "30s",
   "schemaVersion": 37,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "python-rest-api",
+    "api"
+  ],
   "templating": {
     "list": []
   },
@@ -398,7 +400,7 @@
   "timezone": "",
   "title": "python-rest-api",
   "uid": "python-rest-api",
-  "version": 1,
+  "version": 9,
   "weekStart": ""
 }
 
