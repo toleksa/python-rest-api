@@ -7,6 +7,6 @@ metadata:
   labels:
     grafana_dashboard: "1"
 data:
-  config.json: |-
+  python-rest-api-mariadb.json: |-
 {{ .Files.Get "files/python-rest-api-mariadb.json" | indent 4}}
 {{- end }}
