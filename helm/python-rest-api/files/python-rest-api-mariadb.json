@@ -4954,8 +4954,9 @@
   "schemaVersion": 37,
   "style": "dark",
   "tags": [
-    "Percona",
-    "MySQL"
+    "python-rest-api",
+    "MySQL",
+    "Percona"
   ],
   "templating": {
     "list": [
