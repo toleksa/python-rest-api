@@ -34,6 +34,8 @@ spec:
         auth:
           database: python_rest_api
           username: python-rest-api
+          rootPassword: abc123
+          password: 123qwe
 
         initdbScripts:
           init.sql: |
