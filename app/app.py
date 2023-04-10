@@ -38,7 +38,7 @@ while True:
     if attempts > 5:
         print("ERR: " + str(attempts - 1) + " attempts failed, exiting")
         sys.exit(1)
-    time.sleep(3)
+    time.sleep(5)
 
 pool=None
 attempts=1
@@ -75,7 +75,7 @@ while True:
     if attempts > 5:
         print("ERR: " + str(attempts - 1) + " attempts failed, exiting")
         sys.exit(1)
-    time.sleep(3)
+    time.sleep(5)
 
 # Add prometheus wsgi middleware to route /metrics requests
 app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
