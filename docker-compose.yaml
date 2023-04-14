@@ -29,6 +29,9 @@ services:
       - DB_PORT=3306
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    deploy:
+      restart_policy:
+        condition: on-failure
 
   prometheus:
     image: bitnami/prometheus:latest
