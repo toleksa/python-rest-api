@@ -47,6 +47,9 @@ spec:
   - `hostname -I | awk '{print $1"/32"}'`
 EOF
 
+echo "installing kube-prometheus-stack"
+helm install --create-namespace --namespace monitoring kube-prometheus-stack prometheus-community/kube-prometheus-stack
+
 echo "installing python-rest-api"
 helm install --create-namespace --namespace python-rest-api python-rest-api-mariadb bitnami/mariadb -f mariadb-values.yaml
 helm install --namespace python-rest-api python-rest-api-redis bitnami/redis -f redis-values.yaml
