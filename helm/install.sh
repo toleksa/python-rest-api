@@ -36,7 +36,8 @@ helm install --create-namespace --namespace longhorn-system longhorn longhorn/lo
 
 echo "installing metallb"
 helm install --create-namespace --namespace metallb-system metallb bitnami/metallb
-kubectl wait --for=condition=Ready -n metallb-system pod `kubectl -n metallb-system get pods | grep metallb-controller | gawk '{ print $1 }'`
+#kubectl wait --for=condition=Ready -n metallb-system pod `kubectl -n metallb-system get pods | grep metallb-controller | gawk '{ print $1 }'`
+kubectl -n metallb-system rollout status deployment metallb-controller
 kubectl -n metallb-system apply -f - <<EOF
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
