@@ -12,7 +12,7 @@ if [ "$1" == "yes" ]; then
   curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-rke2.sh | bash
   curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-bash.sh | bash
   . ~/.bashrc
-  #TODO: workaround for: kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission
+  #TODO: Internal error occurred: failed calling webhook "validate.nginx.ingress.kubernetes.io": failed to call webhook: Post "https://rke2-ingress-nginx-controller-admission.kube-system.svc:443/networking/v1/ingresses?timeout=10s": x509: certificate signed by unknown authority
   kubectl delete -A ValidatingWebhookConfiguration rke2-ingress-nginx-admission
 elif [ "$1" == "no" ]; then
   echo "skipping rke2"
