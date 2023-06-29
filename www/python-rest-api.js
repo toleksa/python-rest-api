@@ -1,9 +1,8 @@
 $(function () {
 
-  var API_URL="http://docker1.kube.ac:5000"
-  //API_URL="http://python-rest-api.c3.kube.ac"
+  var API_URL=window.location.protocol + '//' + window.location.hostname + ":5000"
 
-  if (typeof ENV_API_URL !== 'undefined') {
+  if (typeof ENV_API_URL !== '') {
     API_URL=ENV_API_URL;
   }
 
