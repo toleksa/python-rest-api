@@ -2,7 +2,7 @@ $(function () {
 
   var API_URL=window.location.protocol + '//' + window.location.hostname + ":5000"
 
-  if (typeof ENV_API_URL !== '') {
+  if (ENV_API_URL !== '') {
     API_URL=ENV_API_URL;
   }
 
