@@ -27,4 +27,8 @@ services:
   redis:
     ports:
       - 6379:6379
+  www:
+    environment:
+      - ENV_API_URL=http://api:5000
+
  
