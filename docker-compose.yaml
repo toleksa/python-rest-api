@@ -50,7 +50,7 @@ services:
     volumes:
       - ${PWD}/grafana/provisioning:/etc/grafana/provisioning:Z
     environment:
-      - PROMETHEUS_URL=http://prometheus:9090
+      - PROMETHEUS_URL=${PROMETHEUS_URL}
 
   www:
     image: docker.io/toleksa/python-rest-api-www:latest

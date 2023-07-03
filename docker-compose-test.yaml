@@ -9,9 +9,9 @@ services:
     volumes:
       - ${PWD}/tests/integration:/pytest:Z
     environment:
-      - API_URL=http://api:5000
-      - WWW_URL=http://www:8000
-      - PROMETHEUS_URL=http://prometheus:9090
+      - API_URL=${API_URL}
+      - WWW_URL=${WWW_URL}
+      - PROMETHEUS_URL=${PROMETHEUS_URL}
   perf:
     image: blazemeter/taurus:latest
     container_name: python-rest-api-perf
@@ -20,7 +20,7 @@ services:
     volumes:
       - ${PWD}/tests/performance:/bzt-configs:Z
     environment:
-      - API_URL=http://api:5000
+      - API_URL=${API_URL}
   db:
     ports:
       - 3306:3306
@@ -29,6 +29,6 @@ services:
       - 6379:6379
   www:
     environment:
-      - ENV_API_URL=http://api:5000
+      - ENV_API_URL=${API_URL}
 
  
