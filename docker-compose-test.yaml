@@ -23,10 +23,10 @@ services:
       - API_URL=${API_URL}
   db:
     ports:
-      - 3306:3306
+      - ${DB_PORT}:${DB_PORT}
   redis:
     ports:
-      - 6379:6379
+      - ${REDIS_PORT}:${REDIS_PORT}
   www:
     environment:
       - ENV_API_URL=${API_URL}
