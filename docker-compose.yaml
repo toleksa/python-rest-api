@@ -25,9 +25,9 @@ services:
     environment:
       - DB_PASS=password
       - DB_USER=user
-      - DB_HOST=db
+      - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
-      - REDIS_HOST=redis
+      - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
     deploy:
       restart_policy:
