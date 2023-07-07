@@ -7,10 +7,10 @@ services:
     volumes:
       - ${PWD}/app/init.sql:/docker-entrypoint-initdb.d/init.sql:Z
     environment:
-      - MARIADB_PASSWORD=password
-      - MARIADB_USER=user
-      - MARIADB_DATABASE=python_rest_api
-      - MARIADB_ROOT_PASSWORD=password
+      - MARIADB_PASSWORD=${DB_PASS}
+      - MARIADB_USER=${DB_USER}
+      - MARIADB_DATABASE=${DB_DATABASE}
+      - MARIADB_ROOT_PASSWORD=${DB_PASS}
 
   redis:
     image: docker.io/library/redis:alpine
@@ -23,10 +23,11 @@ services:
     ports:
       - ${API_PORT}:${API_PORT}
     environment:
-      - DB_PASS=password
-      - DB_USER=user
+      - DB_PASS=${DB_PASS}
+      - DB_USER=${DB_USER}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
+      - DB_DATABASE=${DB_DATABASE}
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
     deploy:
