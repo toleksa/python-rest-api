@@ -52,7 +52,7 @@ def create_connection_pool():
         password=os.environ['DB_PASS'],
         host=os.environ['DB_HOST'],
         port=int(os.environ['DB_PORT']),
-        database="python_rest_api",
+        database=os.environ['DB_DATABASE'],
         pool_name="dict",
         pool_size=5)
 
