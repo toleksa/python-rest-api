@@ -26,6 +26,7 @@ pipeline {
         WWW_SUBDIR = "www/"
         CREDENTIALS = credentials('dockerhub')
         DB_PORT=13306
+        DB_DATABASE=python-rest-api
         REDIS_PORT=16379
         API_PORT=15000
         API_URL="http://api:${API_PORT}"
@@ -76,7 +77,7 @@ pipeline {
                   docker.image("redis:alpine").withRun("-p ${REDIS_PORT}:${REDIS_PORT} --network ${n} --hostname redis","redis-server \
                       --port ${REDIS_PORT}") {
                 	  docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --hostname api \
-                        -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e REDIS_HOST=redis \
+                        -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e DB_DATABASE=${DB_DATABASE} -e REDIS_HOST=redis \
                         -e REDIS_PORT=${REDIS_PORT} -e API_PORT=${API_PORT}") { 
                    	  docker.image("${IMAGE}-www:${BUILD_NUMBER}").withRun("-p ${WWW_PORT}:${WWW_PORT} --network ${n} --hostname www \
                           -e WWW_PORT=${WWW_PORT} -e ENV_API_URL=${API_URL}") {
@@ -125,7 +126,8 @@ pipeline {
                     --mount type=bind,source=${WORKSPACE}/app/init.sql,target=/docker-entrypoint-initdb.d/init.sql","--port ${DB_PORT}") { c ->
                   docker.image("redis:alpine").withRun("-p ${REDIS_PORT}:${REDIS_PORT} --network ${n} --hostname redis","redis-server --port ${REDIS_PORT}") {
                     docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --hostname api -e DB_PASS=password \
-                        -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e REDIS_HOST=redis -e REDIS_PORT=${REDIS_PORT} -e API_PORT=${API_PORT}") {
+                        -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e DB_DATABASE=${DB_DATABASE} -e REDIS_HOST=redis -e REDIS_PORT=${REDIS_PORT} \
+                        -e API_PORT=${API_PORT}") {
 		                  docker.image("blazemeter/taurus:latest").inside("--network ${n} --hostname perf -u 0:0 --entrypoint='' -e API_URL=${API_URL}"){ cc ->
 			                  sh 'bzt -o settings.env.API_URL=${API_URL} tests/performance/bzt.yml ; ls -ltr /var/lib/jenkins/workspace/python-rest-api'
 		                  }
