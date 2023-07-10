@@ -26,7 +26,7 @@ pipeline {
         WWW_SUBDIR = "www/"
         CREDENTIALS = credentials('dockerhub')
         DB_PORT=13306
-        DB_DATABASE=python-rest-api
+        DB_DATABASE="python-rest-api"
         REDIS_PORT=16379
         API_PORT=15000
         API_URL="http://api:${API_PORT}"
