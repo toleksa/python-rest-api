@@ -1,6 +1,6 @@
 # Dockerfile
 
-FROM python:3.12.0a4-alpine3.17
+FROM python:3.11.5-alpine3.18
 COPY app/requirements.txt /requirements.txt
 RUN apk add --no-cache --virtual build-deps build-base \
     && apk add --no-cache mariadb-connector-c-dev \
