@@ -55,6 +55,8 @@ spec:
               secretKeyRef:
                 name: python-rest-api-mariadb
                 key: mariadb-password
+          - name: DB_DATABASE
+            value: python_rest_api
           - name: API_PORT
             value: "5000"
           - name: DB_HOST
