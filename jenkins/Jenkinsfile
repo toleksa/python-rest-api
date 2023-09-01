@@ -76,14 +76,14 @@ pipeline {
                     --mount type=bind,source=${WORKSPACE}/app/init.sql,target=/docker-entrypoint-initdb.d/init.sql","--port ${DB_PORT}") { c ->
                   docker.image("redis:alpine").withRun("-p ${REDIS_PORT}:${REDIS_PORT} --network ${n} --hostname redis","redis-server \
                       --port ${REDIS_PORT}") {
-                	  docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --hostname api \
+                    docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --hostname api \
                         -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e DB_DATABASE=${DB_DATABASE} -e REDIS_HOST=redis \
                         -e REDIS_PORT=${REDIS_PORT} -e API_PORT=${API_PORT}") { 
-                   	  docker.image("${IMAGE}-www:${BUILD_NUMBER}").withRun("-p ${WWW_PORT}:${WWW_PORT} --network ${n} --hostname www \
+                      docker.image("${IMAGE}-www:${BUILD_NUMBER}").withRun("-p ${WWW_PORT}:${WWW_PORT} --network ${n} --hostname www \
                           -e WWW_PORT=${WWW_PORT} -e ENV_API_URL=${API_URL}") {
                         sh "sed -e 's@api:5000@api:'${API_PORT}'@g' prometheus/prometheus.yml |\
                             sed -e 's@scrape_interval: 15s@scrape_interval: 1s@g' > prometheus/jenkins.yml"
-                  	    docker.image("bitnami/prometheus:latest").withRun("-p ${PROMETHEUS_PORT}:${PROMETHEUS_PORT} --network ${n} \
+                        docker.image("bitnami/prometheus:latest").withRun("-p ${PROMETHEUS_PORT}:${PROMETHEUS_PORT} --network ${n} \
                             --hostname prometheus -e API_URL=${API_URL} \
                             -v ${WORKSPACE}/prometheus/jenkins.yml:/opt/bitnami/prometheus/conf/prometheus.yml:Z","\
                               --config.file=/opt/bitnami/prometheus/conf/prometheus.yml \
@@ -91,20 +91,20 @@ pipeline {
                               --storage.tsdb.path=/opt/bitnami/prometheus/data \
                               --web.console.libraries=/opt/bitnami/prometheus/conf/console_libraries \
                               --web.console.templates=/opt/bitnami/prometheus/conf/consoles") {
-                    	    pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
-                    	    pytest_integration_image.tag("latest")
-                    	    pytest_integration_image.inside("--network ${n} -e API_URL=${API_URL} -e PROMETHEUS_URL=${PROMETHEUS_URL} -e WWW_URL=${WWW_URL} \
+                          pytest_integration_image = docker.build("${IMAGE}-pytest-integration:${BUILD_NUMBER}","-f tests/integration/Dockerfile .")
+                          pytest_integration_image.tag("latest")
+                          pytest_integration_image.inside("--network ${n} -e API_URL=${API_URL} -e PROMETHEUS_URL=${PROMETHEUS_URL} -e WWW_URL=${WWW_URL} \
                               -v ${WORKSPACE}/tests/integration:/pytest") {
-                    	  	  sh 'counter=1 ; until $(curl --output /dev/null --silent --head --fail $API_URL/health); do if [ "$counter" -gt 30 ]; then \
+                            sh 'counter=1 ; until $(curl --output /dev/null --silent --head --fail $API_URL/health); do if [ "$counter" -gt 30 ]; then \
                                 echo "ERR: python-rest-api app not ready, exiting" ; exit 1 ; fi ; counter=$((counter+1)) ; printf "." ; sleep 1 ; done ; \
                                 pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py ;\
                                 pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_www_result.xml /pytest/test_www.py ;\
                                 pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_prometheus_result.xml /pytest/test_prometheus.py'
                           }
                         }
-                  	  }
+                      }
                     }
-									}
+                  }
                 }
               }
             }
@@ -128,9 +128,9 @@ pipeline {
                     docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --hostname api -e DB_PASS=password \
                         -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e DB_DATABASE=${DB_DATABASE} -e REDIS_HOST=redis -e REDIS_PORT=${REDIS_PORT} \
                         -e API_PORT=${API_PORT}") {
-		                  docker.image("blazemeter/taurus:latest").inside("--network ${n} --hostname perf -u 0:0 --entrypoint='' -e API_URL=${API_URL}"){ cc ->
-			                  sh 'bzt -o settings.env.API_URL=${API_URL} tests/performance/bzt.yml ; ls -ltr /var/lib/jenkins/workspace/python-rest-api'
-		                  }
+                      docker.image("blazemeter/taurus:latest").inside("--network ${n} --hostname perf -u 0:0 --entrypoint='' -e API_URL=${API_URL}"){ cc ->
+                        sh 'bzt -o settings.env.API_URL=${API_URL} tests/performance/bzt.yml ; ls -ltr /var/lib/jenkins/workspace/python-rest-api'
+                      }
                     }
                   }
                 }
@@ -139,7 +139,7 @@ pipeline {
           }
           post {
             always {
-	      perfReport 'bzt-result.xml'
+        perfReport 'bzt-result.xml'
             }
           }
         }
