@@ -116,13 +116,13 @@ def db_connection(func):
     def wrapper(*args, **kwargs):
         conn = pool.get_connection()
         conn.auto_reconnect = True
-        cur = conn.cursor()
+        cursor = conn.cursor()
         try:
-            result = func(cur, *args, **kwargs)
+            result = func(cursor, *args, **kwargs)
         finally:
-            if cur.rowcount > 0:
+            if cursor.rowcount > 0:
                 conn.commit()
-            cur.close()
+            cursor.close()
             conn.close()
         return result
 
@@ -149,15 +149,15 @@ def select_cache():
 
 @app.route("/reset", methods=["GET"])
 @db_connection
-def reset(cur):
+def reset(cursor):
     """reset DB state to initial"""
     query = "TRUNCATE TABLE dict"
-    cur.execute(query)
+    cursor.execute(query)
     try:
         with open("init.sql", 'r', encoding="utf-8") as init_file:
             for line in init_file:
                 if not line.startswith(("create","CREATE")):
-                    cur.execute(line)
+                    cursor.execute(line)
     except FileNotFoundError as e:
         print(f"ERR /reset: init.sql not found: {e}")
         sys.exit(2)
@@ -171,25 +171,25 @@ def reset(cur):
 
 @app.route("/data", methods=["GET"])
 @db_connection
-def select_all(cur):
+def select_all(cursor):
     """get all entries"""
     query = "SELECT * from dict"
-    cur.execute(query)
+    cursor.execute(query)
     res = []
-    for key, value in cur:
+    for key, value in cursor:
         res.append((key, value))
     return jsonify(res), 200
 
 
 @app.route("/data/<key>", methods=["GET"])
 @db_connection
-def select(cur, key):
+def select(cursor, key):
     """get one value"""
     value = myRedis.get(key)
     if value is None:
         query = f'SELECT v FROM dict WHERE k="{key}"'
-        cur.execute(query)
-        result = cur.fetchone()
+        cursor.execute(query)
+        result = cursor.fetchone()
         if result is not None:
             value = result[0]
             myRedis.set(key, value)
@@ -200,7 +200,7 @@ def select(cur, key):
 
 @app.route("/data/add", methods=["POST"])
 @db_connection
-def insert(cur):
+def insert(cursor):
     """add entry to DB"""
     for key in request.get_json():
         value = request.get_json()[key]
@@ -208,7 +208,7 @@ def insert(cur):
         if key == "":
             return "", 400
         try:
-            cur.execute(
+            cursor.execute(
                 "INSERT INTO dict (k,v) VALUES (?, ?) ON DUPLICATE KEY UPDATE v=?",
                 (key, value, value),
             )
@@ -219,13 +219,13 @@ def insert(cur):
 
 @app.route("/data/put/<key>/value/<value>", methods=["PUT"])
 @db_connection
-def update(cur, key, value):
+def update(cursor, key, value):
     """update value"""
     if key is None or value is None:
         return "", 400, {"Access-Control-Allow-Origin": "*"}
     query = f'UPDATE dict set v="{value}" WHERE k="{key}"'
-    cur.execute(query)
-    if cur.rowcount == 0:
+    cursor.execute(query)
+    if cursor.rowcount == 0:
         return "", 404
     myRedis.delete(key)
     return "", 204
@@ -233,12 +233,12 @@ def update(cur, key, value):
 
 @app.route("/data/del/<key>", methods=["DELETE"])
 @db_connection
-def delete(cur, key):
+def delete(cursor, key):
     """delete entry"""
     if key is None:
         return "", 400
     query = f'DELETE FROM dict WHERE k="{key}"'
-    cur.execute(query)
+    cursor.execute(query)
     myRedis.delete(key)
     return "", 204
 
@@ -251,11 +251,11 @@ def health():
 
 @app.route("/id")
 @db_connection
-def get_ids(cur):
+def get_ids(cursor):
     """get hostnames of backend machines"""
     api_host = os.uname()[1]
     query = "select @@hostname;"
-    cur.execute(query)
-    db_host = cur.fetchone()
+    cursor.execute(query)
+    db_host = cursor.fetchone()
     result = {"api_host": api_host, "db_host": db_host[0]}
     return jsonify(result), 200
