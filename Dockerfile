@@ -12,6 +12,6 @@ EXPOSE 5000
 STOPSIGNAL SIGTERM
 
 WORKDIR /app
-COPY app/app.py app/start.sh ./
+COPY app/app.py app/start.sh app/init.sql ./
 CMD /app/start.sh
 

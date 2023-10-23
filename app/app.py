@@ -157,9 +157,14 @@ def reset(cur):
     """reset DB state to initial"""
     query = "TRUNCATE TABLE dict"
     cur.execute(query)
-    # TODO: should use init.sql
-    query = "INSERT INTO dict (k, v) VALUES ('Homer','Simpson'),('Jeffrey','Lebowski'),('Stan','Smith')"
-    cur.execute(query)
+    try:
+        with open("init.sql") as initFile:
+            for line in initFile:
+                if not line.istartswith("create"):
+                    cur.execute(line)
+    except FileNotFoundError as e:
+        print(f"ERR /reset: init.sql not found: {e}")
+        sys.exit(2)
     keys = myRedis.keys()
     for key in keys:
         myRedis.delete(key)
