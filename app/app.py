@@ -160,7 +160,7 @@ def reset(cur):
     try:
         with open("init.sql") as initFile:
             for line in initFile:
-                if not line.istartswith("create"):
+                if not line.startswith(("create","CREATE")):
                     cur.execute(line)
     except FileNotFoundError as e:
         print(f"ERR /reset: init.sql not found: {e}")
