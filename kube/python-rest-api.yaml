@@ -47,6 +47,8 @@ spec:
           value: mariadb
         - name: DB_PORT
           value: "3306"
+        - name: DB_DATABASE
+          value: "python_rest_api"
         - name: REDIS_HOST
           value: redis
         - name: REDIS_PORT
