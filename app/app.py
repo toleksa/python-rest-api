@@ -54,9 +54,8 @@ attempts = 1
 
 def create_connection_pool():
     """Creates and returns a Connection Pool"""
-
-    # Create Connection Pool
-    pool = mariadb.ConnectionPool(
+    # Return Connection Pool
+    return mariadb.ConnectionPool(
         user=os.environ["DB_USER"],
         password=os.environ["DB_PASS"],
         host=os.environ["DB_HOST"],
@@ -66,18 +65,15 @@ def create_connection_pool():
         pool_size=5,
     )
 
-    # Return Connection Pool
-    return pool
-
 
 while True:
     try:
         pool = create_connection_pool()
-        conn = pool.get_connection()
-        cur = conn.cursor()
-        cur.execute("select 1")
-        cur.close()
-        conn.close()
+        test_conn = pool.get_connection()
+        test_cur = test_conn.cursor()
+        test_cur.execute("select 1")
+        test_cur.close()
+        test_conn.close()
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
     if pool is not None:
