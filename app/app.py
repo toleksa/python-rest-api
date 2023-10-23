@@ -1,67 +1,78 @@
-from flask import Flask, jsonify, request, redirect
-from prometheus_client import make_wsgi_app, Counter
-from flask_cors import CORS
-from functools import wraps
-from werkzeug.middleware.dispatcher import DispatcherMiddleware
-import mariadb
-import redis
+"""Simple rest api with key-value database"""
 import sys
 import os
 import time
+from functools import wraps
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
-DEBUG=os.environ.get('DEBUG',0)
-if DEBUG=="1" or DEBUG=="true" or DEBUG==1:
-    DEBUG=1
-elif DEBUG=="0" or DEBUG=="false" or DEBUG==0:
-    DEBUG=0
+import mariadb
+import redis
+from flask import Flask, jsonify, request, redirect
+from prometheus_client import make_wsgi_app, Counter
+from flask_cors import CORS
+
+DEBUG = os.environ.get("DEBUG", 0)
+if DEBUG in ["1", True, "true", 1]:
+    DEBUG = 1
+elif DEBUG in ["0", False, "false", 0]:
+    DEBUG = 0
 else:
     print(f"ERR: unrecognized DEBUG={DEBUG} value")
-    exit(1)
-if DEBUG==1:
+    sys.exit(1)
+if DEBUG == 1:
     print("Enabled DEBUG")
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
-requests = Counter('python_rest_api_requests', 'Requests metric', ['endpoint', 'method'])
-responses = Counter('python_rest_api_responses', 'Responses metric', ['endpoint', 'status_code'])
+requests = Counter(
+    "python_rest_api_requests", "Requests metric", ["endpoint", "method"]
+)
+responses = Counter(
+    "python_rest_api_responses", "Responses metric", ["endpoint", "status_code"]
+)
 
-red = redis.Redis(host=os.environ['REDIS_HOST'], port=int(os.environ['REDIS_PORT']), db=0)
-attempts=1
+myRedis = redis.Redis(
+    host=os.environ["REDIS_HOST"], port=int(os.environ["REDIS_PORT"]), db=0
+)
+attempts = 1
 
 while True:
     try:
-        red.info()
+        myRedis.info()
         break
     except redis.exceptions.ConnectionError as e:
         print(f"Error connecting to  Redis: {e}")
-    attempts+=1
+    attempts += 1
     if attempts > 5:
         print("ERR: " + str(attempts - 1) + " attempts failed, exiting")
         sys.exit(1)
     time.sleep(5)
 
-pool=None
-attempts=1
+pool = None
+attempts = 1
+
 
 def create_connection_pool():
     """Creates and returns a Connection Pool"""
 
     # Create Connection Pool
     pool = mariadb.ConnectionPool(
-        user=os.environ['DB_USER'],
-        password=os.environ['DB_PASS'],
-        host=os.environ['DB_HOST'],
-        port=int(os.environ['DB_PORT']),
-        database=os.environ['DB_DATABASE'],
+        user=os.environ["DB_USER"],
+        password=os.environ["DB_PASS"],
+        host=os.environ["DB_HOST"],
+        port=int(os.environ["DB_PORT"]),
+        database=os.environ["DB_DATABASE"],
         pool_name="dict",
-        pool_size=5)
+        pool_size=5,
+    )
 
     # Return Connection Pool
     return pool
 
+
 while True:
     try:
-        pool=create_connection_pool()
+        pool = create_connection_pool()
         conn = pool.get_connection()
         cur = conn.cursor()
         cur.execute("select 1")
@@ -71,35 +82,40 @@ while True:
         print(f"Error connecting to MariaDB Platform: {e}")
     if pool is not None:
         break
-    attempts+=1
+    attempts += 1
     if attempts > 5:
         print("ERR: " + str(attempts - 1) + " attempts failed, exiting")
         sys.exit(1)
     time.sleep(5)
 
 # Add prometheus wsgi middleware to route /metrics requests
-app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
-    '/metrics': make_wsgi_app()
-})
+app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": make_wsgi_app()})
+
 
 @app.before_request
 def before_request():
-    if DEBUG==1:
+    """labels for CORS"""
+    if DEBUG == 1:
         print("===REQUEST=== [ " + str(request.method) + " " + str(request.path) + " ]")
         print(request.headers)
         print("request path: " + str(request.path))
         print("request url_rule: " + str(request.url_rule))
     requests.labels(request.path, request.method).inc()
 
+
 @app.after_request
 def after_request(response):
+    """labels for CORS"""
     responses.labels(request.path, response.status_code).inc()
-    if DEBUG==1:
+    if DEBUG == 1:
         print("===RESPONSE===")
         print(response.headers)
     return response
 
+
 def db_connection(func):
+    """execute query on db"""
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         conn = pool.get_connection()
@@ -113,106 +129,132 @@ def db_connection(func):
             cur.close()
             conn.close()
         return result
+
     return wrapper
 
-@app.route('/')
+
+@app.route("/")
 def go_to_data():
+    """/ -> redirect to /data"""
     return redirect("/data", code=302)
 
-@app.route('/cache', methods=['GET'])
+
+@app.route("/cache", methods=["GET"])
 def select_cache():
+    """get what is in cache"""
     result = []
-    keys = red.keys()
+    keys = myRedis.keys()
     for key in keys:
-        value = result.append((key.decode("utf-8"), red.get(key.decode("utf-8")).decode("utf-8")))
+        result.append(
+            (key.decode("utf-8"), myRedis.get(key.decode("utf-8")).decode("utf-8"))
+        )
     return result, 200
 
-@app.route('/reset', methods=['GET'])
+
+@app.route("/reset", methods=["GET"])
 @db_connection
 def reset(cur):
-    query = 'TRUNCATE TABLE dict'
+    """reset DB state to initial"""
+    query = "TRUNCATE TABLE dict"
     cur.execute(query)
+    # TODO: should use init.sql
     query = "INSERT INTO dict (k, v) VALUES ('Homer','Simpson'),('Jeffrey','Lebowski'),('Stan','Smith')"
     cur.execute(query)
-    keys = red.keys()
+    keys = myRedis.keys()
     for key in keys:
-        red.delete(key)
+        myRedis.delete(key)
     requests._metrics.clear()
     responses._metrics.clear()
-    return '', 204
+    return "", 204
 
-@app.route('/data', methods=['GET'])
+
+@app.route("/data", methods=["GET"])
 @db_connection
 def select_all(cur):
+    """get all entries"""
     query = "SELECT * from dict"
     cur.execute(query)
     res = []
-    for (k, v) in cur:
-        res.append((k,v))
+    for key, value in cur:
+        res.append((key, value))
     return jsonify(res), 200
 
-@app.route('/data/<key>', methods=['GET'])
+
+@app.route("/data/<key>", methods=["GET"])
 @db_connection
-def select(cur,key):
-    value = red.get(key)
+def select(cur, key):
+    """get one value"""
+    value = myRedis.get(key)
     if value is None:
-        query = f'SELECT v FROM dict WHERE k="{key}"' 
+        query = f'SELECT v FROM dict WHERE k="{key}"'
         cur.execute(query)
         result = cur.fetchone()
         if result is not None:
             value = result[0]
-            red.set(key,value)
+            myRedis.set(key, value)
     else:
         value = value.decode("utf-8")
     return jsonify((key, value)), 200
 
-@app.route('/data/add', methods=['POST'])
+
+@app.route("/data/add", methods=["POST"])
 @db_connection
 def insert(cur):
-  for k in request.get_json():
-    v = request.get_json()[k]
-    print("request: ", k, " : ", v)
-    if k == "":
-        return '', 400
-    try:
-      cur.execute("INSERT INTO dict (k,v) VALUES (?, ?) ON DUPLICATE KEY UPDATE v=?", (k,v,v))
-    except mariadb.Error as e:
-      print(f"Error: {e}")
-  return '', 204
+    """add entry to DB"""
+    for key in request.get_json():
+        value = request.get_json()[key]
+        print("request: ", key, " : ", value)
+        if key == "":
+            return "", 400
+        try:
+            cur.execute(
+                "INSERT INTO dict (k,v) VALUES (?, ?) ON DUPLICATE KEY UPDATE v=?",
+                (key, value, value),
+            )
+        except mariadb.Error as e:
+            print(f"Error: {e}")
+    return "", 204
 
-@app.route('/data/put/<key>/value/<value>', methods=['PUT'])
+
+@app.route("/data/put/<key>/value/<value>", methods=["PUT"])
 @db_connection
-def update(cur,key,value):
+def update(cur, key, value):
+    """update value"""
     if key is None or value is None:
-        return '', 400, {"Access-Control-Allow-Origin": "*"}
+        return "", 400, {"Access-Control-Allow-Origin": "*"}
     query = f'UPDATE dict set v="{value}" WHERE k="{key}"'
     cur.execute(query)
     if cur.rowcount == 0:
-        return '', 404
-    red.delete(key)
-    return '', 204
+        return "", 404
+    myRedis.delete(key)
+    return "", 204
 
-@app.route('/data/del/<key>', methods=['DELETE'])
+
+@app.route("/data/del/<key>", methods=["DELETE"])
 @db_connection
-def delete(cur,key):
+def delete(cur, key):
+    """delete entry"""
     if key is None:
-        return '', 400
+        return "", 400
     query = f'DELETE FROM dict WHERE k="{key}"'
     cur.execute(query)
-    red.delete(key)
-    return '', 204
+    myRedis.delete(key)
+    return "", 204
 
-@app.route('/health')
+
+@app.route("/health")
 def health():
-  return '', 200
+    """health endpoint"""
+    return "", 200
 
-@app.route('/id')
+
+@app.route("/id")
 @db_connection
 def id(cur):
-  api_host = os.uname()[1]
-  query="select @@hostname;"
-  cur.execute(query)
-  db_host = cur.fetchone()
-  result = { "api_host": api_host, "db_host": db_host[0] }
-  return jsonify(result), 200
-
+    """get hostnames of backend machines"""
+    api_host = os.uname()[1]
+    query = "select @@hostname;"
+    cur.execute(query)
+    db_host = cur.fetchone()
+    result = {"api_host": api_host, "db_host": db_host[0]}
+    return jsonify(result), 200
