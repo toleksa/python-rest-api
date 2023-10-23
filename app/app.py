@@ -158,8 +158,8 @@ def reset(cur):
     query = "TRUNCATE TABLE dict"
     cur.execute(query)
     try:
-        with open("init.sql") as initFile:
-            for line in initFile:
+        with open("init.sql", 'r', encoding="utf-8") as init_file:
+            for line in init_file:
                 if not line.startswith(("create","CREATE")):
                     cur.execute(line)
     except FileNotFoundError as e:
@@ -255,7 +255,7 @@ def health():
 
 @app.route("/id")
 @db_connection
-def id(cur):
+def get_ids(cur):
     """get hostnames of backend machines"""
     api_host = os.uname()[1]
     query = "select @@hostname;"
