@@ -24,6 +24,7 @@ pipeline {
         IMAGE = "toleksa/${JOB_NAME}"
         SUBDIR = "."
         WWW_SUBDIR = "www/"
+        TESTS_SUBDIR = "tests/"
         CREDENTIALS = credentials('dockerhub')
         DB_PORT=13306
         DB_DATABASE="python_rest_api"
@@ -46,19 +47,21 @@ pipeline {
                     docker_image.tag('latest')
                     docker_image_www = docker.build("${IMAGE}-www:${BUILD_NUMBER}","${WWW_SUBDIR}")
                     docker_image_www.tag('latest')
+                    docker_image_tests = docker.build("${IMAGE}-tests:${BUILD_NUMBER}","${TESTS_SUBDIR}")
+                    docker_image_tests.tag('latest')
                 }
                 sh 'docker images'
             }                                                                                                                                                                              
-        }  
+        }
         stage('Unit Test'){
           steps{
-            //sh 'cd ${SUBDIR} ; python3 -m pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_unit_result.xml test_unit.py'
             script {
-              pytest_unit_image = docker.build("${IMAGE}-pytest-unit:${BUILD_NUMBER}","-f tests/unit/Dockerfile .")
-              pytest_unit_image.tag("latest")
-              pytest_unit_image.inside() {
+              tests_image = docker.image("${IMAGE}-tests:${BUILD_NUMBER}")
+              tests_image.inside(){
+                sh 'pylint --output-format=parseable --fail-under=3 /pytest/app/app.py --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" | tee pylint.log || echo "pylint exited with $?"'
                 sh 'cd /pytest ; pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=$OLDPWD/test_unit_result.xml /pytest/test_unit.py'
               }
+              recordIssues enabledForFailure: true, aggregatingResults: true, tool: pyLint(pattern: 'pylint.log')
             }
           }
           post {
@@ -183,7 +186,7 @@ pipeline {
                 '''
                 sh '''
                     #!/bin/bash
-                    for IMG in $(docker images | grep "${IMAGE}-pytest-unit " | grep -v latest | sort -rnk 2 | tail -n +7 | gawk '{ print $1":"$2 }') ; do docker rmi $IMG ; done
+                    for IMG in $(docker images | grep "${IMAGE}-tests " | grep -v latest | sort -rnk 2 | tail -n +7 | gawk '{ print $1":"$2 }') ; do docker rmi $IMG ; done
                 '''
                 //sh 'docker volume rm $(docker volume ls -qf "dangling=true")'
                 sh 'docker images'
