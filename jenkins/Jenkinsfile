@@ -24,7 +24,6 @@ pipeline {
         IMAGE = "toleksa/${JOB_NAME}"
         SUBDIR = "."
         WWW_SUBDIR = "www/"
-        TESTS_SUBDIR = "tests/"
         CREDENTIALS = credentials('dockerhub')
         DB_PORT=13306
         DB_DATABASE="python_rest_api"
@@ -47,7 +46,7 @@ pipeline {
                     docker_image.tag('latest')
                     docker_image_www = docker.build("${IMAGE}-www:${BUILD_NUMBER}","${WWW_SUBDIR}")
                     docker_image_www.tag('latest')
-                    docker_image_tests = docker.build("${IMAGE}-tests:${BUILD_NUMBER}","${TESTS_SUBDIR}")
+                    docker_image_tests = docker.build("${IMAGE}-tests:${BUILD_NUMBER}","-f tests/Dockerfile .")
                     docker_image_tests.tag('latest')
                 }
                 sh 'docker images'
