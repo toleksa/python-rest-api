@@ -1,1 +1,3 @@
 domain: example.com
+replicaCount: 1
+monitoring.enabled: false
