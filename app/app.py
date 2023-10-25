@@ -35,6 +35,7 @@ myRedis = redis.Redis(
     host=os.environ["REDIS_HOST"], port=int(os.environ["REDIS_PORT"]), db=0
 )
 
+
 def test_redis_connection():
     attempts = 1
     while True:
@@ -49,9 +50,11 @@ def test_redis_connection():
             sys.exit(1)
         time.sleep(5)
 
+
 test_redis_connection()
 
 pool = None
+
 
 def create_connection_pool():
     """Creates and returns a Connection Pool"""
@@ -87,6 +90,7 @@ def test_db_connection():
             sys.exit(1)
         time.sleep(5)
 
+
 test_db_connection()
 
 # Add prometheus wsgi middleware to route /metrics requests
@@ -116,6 +120,7 @@ def after_request(response):
 
 def db_connection(func):
     """execute query on db"""
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         conn = pool.get_connection()
@@ -129,6 +134,7 @@ def db_connection(func):
             cursor.close()
             conn.close()
         return result
+
     return wrapper
 
 
@@ -157,9 +163,9 @@ def reset(cursor):
     query = "TRUNCATE TABLE dict"
     cursor.execute(query)
     try:
-        with open("init.sql", 'r', encoding="utf-8") as init_file:
+        with open("init.sql", "r", encoding="utf-8") as init_file:
             for line in init_file:
-                if not line.startswith(("create","CREATE")):
+                if not line.startswith(("create", "CREATE")):
                     cursor.execute(line)
     except FileNotFoundError as e:
         print(f"ERR /reset: init.sql not found: {e}")
