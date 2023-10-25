@@ -38,21 +38,18 @@ app is implementing key-value dictionary via REST api
 app/
 
 `app.py` - actuall app
-    
-`start.sh` - run script
+
+`init.sql` - initial SQL file for DB
     
 `post.sh` - example post to push new data
-       
-### docker tools
-docker/
 
-`run.sh` - launch container (doesn't work on Fedora 36+ - use podman-compose)
-    
-`build.sh` - helper to build image
-    
-`push.sh` - helper to push image
-    
-### docker compose
+`requirements.txt` - requirements file for python/pip
+
+`start.sh` - run script
+       
+### docker files
+
+`Dockerfile` - dockerfile to build app
 
 `docker-compose.yaml` - standard config to run app    
 
