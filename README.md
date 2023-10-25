@@ -8,11 +8,27 @@ app is implementing key-value dictionary via REST api
 
 ### methods
 
-`GET api.kube.ac/data` - will return all records
+`GET /data` - will return all records
 
-`GET api.kube.ac/data/<key>` - will return record for that key
+`GET /data/<key>` - will return record for that key
     
-`POST -H "Content-Type: application/json" -d "{ \"<key>\": \"<value>\" }"` - adds new record or updates value if record with this key already exists
+`POST -H "Content-Type: application/json" -d "{ \"<key>\": \"<value>\" }" /data/add` - adds new record or updates value if record with this key already exists
+
+`PUT /data/put/<key>/value/<value>` - updates <key> with <value>
+
+`DELETE /data/del/<key>` - deletes <key> entry
+
+`GET /health` - endpoint for health state
+
+`GET /metrics` - metrics for Prometheus
+
+
+
+`GET /id` - returns hostnames of API and DB machines (for debugging)
+
+`GET /cache` - shows entries stored in Redis cache
+
+`GET /reset` - restores initial DB state, cleares cache and resets metrics
 
 #TODO: document remaining methods
 
