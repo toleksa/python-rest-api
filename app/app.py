@@ -95,7 +95,7 @@ app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": make_wsgi_app()})
 
 @app.before_request
 def before_request():
-    """labels for CORS"""
+    """metrics for prometheus - requests"""
     if DEBUG == 1:
         print("===REQUEST=== [ " + str(request.method) + " " + str(request.path) + " ]")
         print(request.headers)
@@ -106,7 +106,7 @@ def before_request():
 
 @app.after_request
 def after_request(response):
-    """labels for CORS"""
+    """metrics for prometheus - responses"""
     responses.labels(request.path, response.status_code).inc()
     if DEBUG == 1:
         print("===RESPONSE===")
@@ -116,7 +116,6 @@ def after_request(response):
 
 def db_connection(func):
     """execute query on db"""
-
     @wraps(func)
     def wrapper(*args, **kwargs):
         conn = pool.get_connection()
@@ -130,7 +129,6 @@ def db_connection(func):
             cursor.close()
             conn.close()
         return result
-
     return wrapper
 
 
