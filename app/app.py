@@ -70,7 +70,7 @@ def create_connection_pool():
     )
 
 
-def test_db_connection():
+def test_db_connection(pool):
     attempts = 1
     while True:
         try:
@@ -91,7 +91,7 @@ def test_db_connection():
         time.sleep(5)
 
 
-test_db_connection()
+test_db_connection(pool)
 
 # Add prometheus wsgi middleware to route /metrics requests
 app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": make_wsgi_app()})
