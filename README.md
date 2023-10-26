@@ -34,18 +34,17 @@ app is implementing key-value dictionary via REST api
 
 ## files
 
-### app
-app/
+### application files
 
-`app.py` - actuall app
+`app/app.py` - actuall app
 
-`init.sql` - initial SQL file for DB
+`app/init.sql` - initial SQL file for DB
     
-`post.sh` - example post to push new data
+`app/post.sh` - example post to push new data
 
-`requirements.txt` - requirements file for python/pip
+`app/requirements.txt` - requirements file for python/pip
 
-`start.sh` - run script
+`app/start.sh` - run script
        
 ### docker files
 
@@ -65,6 +64,11 @@ there are deployments in three versions:
 
 `argo/` - use argocd app of apps
 
+### jenkins
+
+`jenkins/Jenkinsfile` - pipeline definition
+
+`jenkins/config.xml` - jenkins project dump
   
 ## dependencies
 
