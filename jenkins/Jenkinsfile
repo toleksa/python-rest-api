@@ -178,15 +178,9 @@ pipeline {
             steps{
                 sh '''
                     #!/bin/bash
-                    for IMG in $(docker images | grep "${IMAGE} " | grep -v latest | sort -rnk 2 | tail -n +7 | gawk '{ print $1":"$2 }') ; do docker rmi $IMG ; done
-                '''
-                sh '''
-                    #!/bin/bash
-                    for IMG in $(docker images | grep "${IMAGE}-pytest-integration " | grep -v latest | sort -rnk 2 | tail -n +7 | gawk '{ print $1":"$2 }') ; do docker rmi $IMG ; done
-                '''
-                sh '''
-                    #!/bin/bash
-                    for IMG in $(docker images | grep "${IMAGE}-tests " | grep -v latest | sort -rnk 2 | tail -n +7 | gawk '{ print $1":"$2 }') ; do docker rmi $IMG ; done
+                    for IMG in ${IMAGE} ${IMAGE}-pytest-integration ${IMAGE}-tests ${IMAGE}-www ; do
+                      for TAG in $(docker images | grep "${IMG} " | grep -v latest | sort -rnk 2 | tail -n +7 | gawk '{ print $1":"$2 }') ; do docker rmi $TAG ; done ;
+                    done
                 '''
                 //sh 'docker volume rm $(docker volume ls -qf "dangling=true")'
                 sh 'docker images'
