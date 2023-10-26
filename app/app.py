@@ -78,8 +78,8 @@ for attempts in range(5):   #6 attempts, 30 seconds
         break
     time.sleep(5)
 else:
-        print("ERR: " + str(attempts - 1) + " attempts failed, exiting")
-        sys.exit(1)
+    print("ERR: " + str(attempts - 1) + " attempts failed, exiting")
+    sys.exit(1)
 
 
 # Add prometheus wsgi middleware to route /metrics requests
