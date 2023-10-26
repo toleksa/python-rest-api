@@ -57,7 +57,7 @@ pipeline {
             script {
               tests_image = docker.image("${IMAGE}-tests:${BUILD_NUMBER}")
               tests_image.inside(){
-                sh 'echo DEBUG ; pwd ; ls -l ; find .'
+                sh 'echo DEBUG ; pwd ; ls -l / ; find / -name app.py'
                 sh 'pylint --output-format=parseable --fail-under=3 /pytest/app/app.py --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" | tee pylint.log || echo "pylint exited with $?"'
                 sh 'cd /pytest ; pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=$OLDPWD/test_unit_result.xml /pytest/test_unit.py'
               }
