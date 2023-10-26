@@ -36,25 +36,19 @@ myRedis = redis.Redis(
 )
 
 
-def test_redis_connection():
-    attempts = 1
-    while True:
-        try:
-            myRedis.info()
-            break
-        except redis.exceptions.ConnectionError as e:
-            print(f"Error connecting to  Redis: {e}")
-        attempts += 1
-        if attempts > 5:
-            print("ERR: " + str(attempts - 1) + " attempts failed, exiting")
-            sys.exit(1)
-        time.sleep(5)
+for attempts in range(5):   #6 attempts, 30 seconds
+    try:
+        myRedis.info()
+        break
+    except redis.exceptions.ConnectionError as e:
+        print(f"Error connecting to  Redis: {e}")
+    time.sleep(5)
+else:
+    print("ERR: " + str(attempts - 1) + " attempts failed, exiting")
+    sys.exit(1)
 
-
-test_redis_connection()
 
 pool = None
-
 
 def create_connection_pool():
     """Creates and returns a Connection Pool"""
@@ -70,28 +64,23 @@ def create_connection_pool():
     )
 
 
-def test_db_connection(pool):
-    attempts = 1
-    while True:
-        try:
-            pool = create_connection_pool()
-            test_conn = pool.get_connection()
-            test_cur = test_conn.cursor()
-            test_cur.execute("select 1")
-            test_cur.close()
-            test_conn.close()
-        except mariadb.Error as e:
-            print(f"Error connecting to MariaDB Platform: {e}")
-        if pool is not None:
-            break
-        attempts += 1
-        if attempts > 5:
-            print("ERR: " + str(attempts - 1) + " attempts failed, exiting")
-            sys.exit(1)
-        time.sleep(5)
+for attempts in range(5):   #6 attempts, 30 seconds
+    try:
+        pool = create_connection_pool()
+        test_conn = pool.get_connection()
+        test_cur = test_conn.cursor()
+        test_cur.execute("select 1")
+        test_cur.close()
+        test_conn.close()
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+    if pool is not None:
+        break
+    time.sleep(5)
+else:
+        print("ERR: " + str(attempts - 1) + " attempts failed, exiting")
+        sys.exit(1)
 
-
-test_db_connection(pool)
 
 # Add prometheus wsgi middleware to route /metrics requests
 app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": make_wsgi_app()})
