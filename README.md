@@ -4,7 +4,7 @@
 
 ### description
 
-app is implementing key-value dictionary via REST api
+Simple Python/Flask app that is implementing key-value dictionary available via REST api
 
 ### methods
 
@@ -22,15 +22,13 @@ app is implementing key-value dictionary via REST api
 
 `GET /metrics` - metrics for Prometheus
 
-
+\
 
 `GET /id` - returns hostnames of API and DB machines (for debugging)
 
 `GET /cache` - shows entries stored in Redis cache
 
 `GET /reset` - restores initial DB state, cleares cache and resets metrics
-
-#TODO: document remaining methods
 
 ## files
 
@@ -70,26 +68,35 @@ there are deployments in three versions:
 
 `jenkins/config.xml` - jenkins project dump
   
-## dependencies
-
-Python - `pip install -r app/requirements.txt`
-
-Fedora - `dnf install mariadb-connector-c-devel python3-devel`
-  
 ## run
 
 ### standalone
+
+dependencies:
+
+Fedora - `dnf install mariadb-connector-c-devel python3-devel`
+
+Ubuntu - `apt install libmariadb-dev`
+
+Python - `pip install -r app/requirements.txt`
+
+run:
 
 ```
 cd app
 ./start.sh
 ```
+Parameters can be configured via ENV variables:
 
-### podman-compose
+```
+REDIS_HOST=127.0.0.1 REDIS_PORT=6379 DB_HOST=127.0.0.1 DB_PORT=3306 DB_DATABASE=python_rest_api API_PORT=5000 DB_USER=user DB_PASS=password ./start.sh
+```
 
-```podman-compose up``` to start app
+### docker-compose
 
-```podman-compose -f docker-compose.yaml -f docker-compose.test.yaml up``` to start app and test container
+`docker-compose up` to start app
+
+`docker-compose -f docker-compose.yaml -f docker-compose.test.yaml up` to start app and test container
 
 ### kubernetes
 
@@ -106,13 +113,13 @@ there are deployments in three versions:
 in each case install process is the same - go into directory and execute:
 
 
-`install.sh` - script takes one parameter:
+`install.sh <yes|no>` - script takes one parameter:
 
 `yes` - will install rke2
     
 `no` - skip installing rke2 - in case kubernetes is already installed
 
-app will be available at **api.kube.ac**
+app will be available at **python-rest-api.`hostname -f`**
 
 ### ChatGPT description:
 
