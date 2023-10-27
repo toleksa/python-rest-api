@@ -10,6 +10,10 @@ if [ "$1" == "yes" ]; then
       curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-rke2.sh | bash
       curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-bash.sh | bash
     . ~/.bashrc
+	  kubectl wait --for=condition=ready node `hostname`
+	  #TODO: Internal error occurred: failed calling webhook "validate.nginx.ingress.kubernetes.io": failed to call webhook: Post "https://rke2-ingress-nginx-controller-admission.kube-system.svc:443/networking/v1/ingresses?timeout=10s": x509: certificate signed by unknown authority
+	  kubectl -n kube-system rollout status deployment rke2-snapshot-validation-webhook
+	  kubectl delete -A ValidatingWebhookConfiguration rke2-ingress-nginx-admission
 elif [ "$1" == "no" ]; then
     echo "skipping rke2"
 else
@@ -45,9 +49,6 @@ data:
       addresses:
       - `hostname -I | awk '{print $1"-"$1}'`
 EOF
-
-#TODO: workaround for: kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission
-kubectl delete -A ValidatingWebhookConfiguration rke2-ingress-nginx-admission
 
 echo "deploying app"
 kubectl create ns python-rest-api

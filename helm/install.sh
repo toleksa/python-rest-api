@@ -8,24 +8,26 @@ if [ $# -ne 1 ]; then
 fi
 
 if [ "$1" == "yes" ]; then
-  echo "installing rke2"
-  curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-rke2.sh | bash
-  curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-bash.sh | bash
-  . ~/.bashrc
-  #TODO: Internal error occurred: failed calling webhook "validate.nginx.ingress.kubernetes.io": failed to call webhook: Post "https://rke2-ingress-nginx-controller-admission.kube-system.svc:443/networking/v1/ingresses?timeout=10s": x509: certificate signed by unknown authority
-  kubectl delete -A ValidatingWebhookConfiguration rke2-ingress-nginx-admission
+    echo "installing rke2"
+    curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-rke2.sh | bash
+    curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-bash.sh | bash
+    . ~/.bashrc
+    kubectl wait --for=condition=ready node `hostname`
+    #TODO: Internal error occurred: failed calling webhook "validate.nginx.ingress.kubernetes.io": failed to call webhook: Post "https://rke2-ingress-nginx-controller-admission.kube-system.svc:443/networking/v1/ingresses?timeout=10s": x509: certificate signed by unknown authority
+    kubectl -n kube-system rollout status deployment rke2-snapshot-validation-webhook
+    kubectl delete -A ValidatingWebhookConfiguration rke2-ingress-nginx-admission
 elif [ "$1" == "no" ]; then
-  echo "skipping rke2"
+    echo "skipping rke2"
 else
-  echo "unrecognized option"
-  exit 1
+    echo "unrecognized option"
+    exit 1
 fi
 
 #check if kubectl installed
 kubectl &> /dev/null
 if [ $? -ne 0 ]; then
-  echo "ERR: check kubectl installation"
-  exit 1
+    echo "ERR: check kubectl installation"
+    exit 1
 fi 
 
 echo "installing helm"
