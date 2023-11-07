@@ -10,19 +10,21 @@ Simple Python/Flask app that is implementing key-value dictionary available via 
 
 `GET /data` - will return all records
 
-`GET /data/<key>` - will return record for that key
+`GET /data/<key>` - will return record for that \<key\>
     
-`POST -H "Content-Type: application/json" -d "{ \"<key>\": \"<value>\" }" /data/add` - adds new record or updates value if record with this key already exists
+`POST -H "Content-Type: application/json" -d "{ \"<key>\": \"<value>\" }" /data/add` - adds new record or updates value if record with this \<key\> already exists
 
-`PUT /data/put/<key>/value/<value>` - updates <key> with <value>
+`PUT /data/put/<key>/value/<value>` - updates \<key\> with \<value\>
 
-`DELETE /data/del/<key>` - deletes <key> entry
+`DELETE /data/del/<key>` - deletes \<key\> entry
+
+</br>
 
 `GET /health` - endpoint for health state
 
 `GET /metrics` - metrics for Prometheus
 
-\
+</br>
 
 `GET /id` - returns hostnames of API and DB machines (for debugging)
 
