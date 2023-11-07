@@ -53,5 +53,5 @@ helm install --create-namespace --namespace monitoring kube-prometheus-stack pro
 echo "installing python-rest-api"
 helm install --create-namespace --namespace python-rest-api python-rest-api-mariadb bitnami/mariadb -f mariadb-values.yaml
 helm install --namespace python-rest-api python-rest-api-redis bitnami/redis -f redis-values.yaml
-sed -e "s/example.com/`hostname -f`/" python-rest-api-values.yaml | helm install --create-namespace --namespace python-rest-api python-rest-api ./python-rest-api -f -
+sed -e "s/example.com/`hostname -d`/" python-rest-api-values.yaml | helm install --create-namespace --namespace python-rest-api python-rest-api ./python-rest-api -f -
 

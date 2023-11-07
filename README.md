@@ -119,7 +119,7 @@ in each case install process is the same - go into directory and execute:
     
 `no` - skip installing rke2 - in case kubernetes is already installed
 
-app will be available at **python-rest-api.`hostname -f`**
+app will be available at **python-rest-api.`hostname -d`**
 
 ### ChatGPT description:
 

@@ -33,5 +33,5 @@ echo "installing argocd"
 curl https://raw.githubusercontent.com/toleksa/kube-system/main/install-argo.sh | bash
 
 echo "installing python-rest-api"
-sed -e "s/example.com/`hostname -f`/" python-rest-api-main.yaml | kubectl apply -f -
+sed -e "s/example.com/`hostname -d`/" python-rest-api-main.yaml | kubectl apply -f -
 
