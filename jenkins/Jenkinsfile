@@ -73,19 +73,19 @@ pipeline {
           steps {
             script {
               withDockerNetwork{ n ->
-                docker.image("mariadb:latest").withRun("-p ${DB_PORT}:${DB_PORT} --network ${n} --network-alias db --hostname db -e MARIADB_PASSWORD='password' \
+                docker.image("mariadb:latest").withRun("--network ${n} --network-alias db --hostname db -e MARIADB_PASSWORD='password' \
                     -e MARIADB_USER='user' -e MARIADB_DATABASE='python_rest_api' -e MARIADB_ROOT_PASSWORD=password \
                     --mount type=bind,source=${WORKSPACE}/app/init.sql,target=/docker-entrypoint-initdb.d/init.sql","--port ${DB_PORT}") { c ->
-                  docker.image("redis:alpine").withRun("-p ${REDIS_PORT}:${REDIS_PORT} --network ${n} --network-alias redis --hostname redis","redis-server \
+                  docker.image("redis:alpine").withRun("--network ${n} --network-alias redis --hostname redis","redis-server \
                       --port ${REDIS_PORT}") {
-                    docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("-p ${API_PORT}:${API_PORT} --network ${n} --network-alias api --hostname api \
+                    docker.image("${IMAGE}:${BUILD_NUMBER}").withRun("--network ${n} --network-alias api --hostname api \
                         -e DB_PASS=password -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e DB_DATABASE=${DB_DATABASE} -e REDIS_HOST=redis \
                         -e REDIS_PORT=${REDIS_PORT} -e API_PORT=${API_PORT}") { 
-                      docker.image("${IMAGE}-www:${BUILD_NUMBER}").withRun("-p ${WWW_PORT}:${WWW_PORT} --network ${n} --network-alias www --hostname www \
+                      docker.image("${IMAGE}-www:${BUILD_NUMBER}").withRun("--network ${n} --network-alias www --hostname www \
                           -e WWW_PORT=${WWW_PORT} -e ENV_API_URL=${API_URL}") {
                         sh "sed -e 's@api:5000@api:'${API_PORT}'@g' prometheus/prometheus.yml |\
                             sed -e 's@scrape_interval: 15s@scrape_interval: 1s@g' > prometheus/jenkins.yml"
-                        docker.image("bitnami/prometheus:latest").withRun("-p ${PROMETHEUS_PORT}:${PROMETHEUS_PORT} --network ${n} \
+                        docker.image("bitnami/prometheus:latest").withRun("--network ${n} \
                             --network-alias prometheus --hostname prometheus -e API_URL=${API_URL} \
                             -v ${WORKSPACE}/prometheus/jenkins.yml:/opt/bitnami/prometheus/conf/prometheus.yml:Z","\
                               --config.file=/opt/bitnami/prometheus/conf/prometheus.yml \
