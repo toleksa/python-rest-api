@@ -1,4 +1,4 @@
-from prometheus_client.parser import text_string_to_metric_families
+from prometheus-client.parser import text_string_to_metric_families
 import requests, json
 import os
 
