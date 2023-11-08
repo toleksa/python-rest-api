@@ -1,6 +1,6 @@
 FROM python:3.12.0-bookworm
 RUN apt update && apt upgrade -y && apt install -y libmariadb-dev libmariadb3 curl\
-    && pip install --upgrade pip pylint pytest && apt clean && rm -rf /var/lib/apt/lists/*
+    && pip install --upgrade pip pylint pytest requests && apt clean && rm -rf /var/lib/apt/lists/*
 WORKDIR /pytest
 COPY app app/
 COPY www www/
