@@ -176,7 +176,7 @@ pipeline {
             steps{
                 sh '''
                     #!/bin/bash
-                    for IMG in ${IMAGE} ${IMAGE}-pytest-integration ${IMAGE}-tests ${IMAGE}-www ; do
+                    for IMG in ${IMAGE} ${IMAGE}-tests ${IMAGE}-www ; do
                       for TAG in $(docker images | grep "${IMG} " | grep -v latest | sort -rnk 2 | tail -n +7 | gawk '{ print $1":"$2 }') ; do docker rmi $TAG ; done ;
                     done
                 '''
