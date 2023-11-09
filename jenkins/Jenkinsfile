@@ -130,7 +130,7 @@ pipeline {
                         -e DB_USER=user -e DB_HOST=db -e DB_PORT=${DB_PORT} -e DB_DATABASE=${DB_DATABASE} -e REDIS_HOST=redis -e REDIS_PORT=${REDIS_PORT} \
                         -e API_PORT=${API_PORT}") {
                       docker.image("blazemeter/taurus:latest").inside("--network ${n} --network-alias perf --hostname perf -u 0:0 --entrypoint='' -e API_URL=${API_URL}"){ cc ->
-                        sh 'bzt -o settings.env.API_URL=${API_URL} tests/performance/bzt.yml'
+                        sh 'bzt -o settings.env.API_URL=${API_URL} tests/bzt.yml'
                       }
                     }
                   }
