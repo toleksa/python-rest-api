@@ -96,9 +96,9 @@ pipeline {
                           tests_image = docker.image("${IMAGE}-tests:${BUILD_NUMBER}")
                           tests_image.inside("--network ${n} --network-alias pytest_integration --hostname pytest_integration \
                               -e API_URL=${API_URL} -e PROMETHEUS_URL=${PROMETHEUS_URL} -e WWW_URL=${WWW_URL}") {
-                            sh 'counter=1 ; until $(curl --output /dev/null --silent --head --fail $API_URL/health); do if [ "$counter" -gt 30 ]; then \
+                            sh 'counter=1 ; until $(curl --output /dev/null --silent --fail $API_URL/health); do if [ "$counter" -gt 30 ]; then \
                                 echo "ERR: python-rest-api app not ready, exiting" ; exit 1 ; fi ; counter=$((counter+1)) ; printf "." ; sleep 1 ; done ; \
-                                counter=1 ; until $(curl --output /dev/null --silent --head --fail $PROMETHEUS_URL); do if [ "$counter" -gt 3000 ]; then \
+                                counter=1 ; until $(curl --output /dev/null --silent --fail $PROMETHEUS_URL); do if [ "$counter" -gt 3000 ]; then \
                                 echo "ERR: prometheus not ready, exiting" ; exit 1 ; fi ; counter=$((counter+1)) ; printf "." ; sleep 1 ; done ; \
                                 pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py ;\
                                 pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_www_result.xml /pytest/test_www.py ;\
