@@ -110,7 +110,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum by (status_code) (rate(python_rest_api_responses_total[1m]))",
+          "expr": "sum by (status_code) (rate(python_rest_api_responses_total[1h]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -202,7 +202,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "rate(python_rest_api_responses_total[1m])",
+          "expr": "rate(python_rest_api_responses_total[1h])",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -296,7 +296,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "100 * (sum(rate(python_rest_api_responses_total{status_code!~\"2..|3..\"}[1m])) by (instance) / sum(rate(python_rest_api_responses_total[1m])) by (instance))",
+          "expr": "100 * (sum(rate(python_rest_api_responses_total{status_code!~\"2..|3..\"}[1h])) by (instance) / sum(rate(python_rest_api_responses_total[1h])) by (instance))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -360,7 +360,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum(rate(python_rest_api_responses_total{status_code=~\"2..|3..\"}[10m]))",
+          "expr": "sum(rate(python_rest_api_responses_total{status_code=~\"2..|3..\"}[1h]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -371,14 +371,14 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum(rate(python_rest_api_responses_total{status_code!~\"2..|3..\"}[10m]))",
+          "expr": "sum(rate(python_rest_api_responses_total{status_code!~\"2..|3..\"}[1h]))",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "B"
         }
       ],
-      "title": "error rate [10m]",
+      "title": "error rate [1h]",
       "type": "piechart"
     }
   ],
