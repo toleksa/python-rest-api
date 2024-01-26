@@ -36,6 +36,13 @@ services:
         condition: on-failure
         max_attempts: 5
 
+  statsd:
+    image: prom/statsd-exporter:v0.22.4
+    container_name: python-rest-api-statsd
+    ports:
+      - "9125:9125"
+      - "9102:9102"
+
   prometheus:
     image: bitnami/prometheus:latest
     container_name: python-rest-api-prometheus

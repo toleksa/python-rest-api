@@ -10,3 +10,4 @@ packaging==23.2
 prometheus-client==0.18.0
 redis==5.0.1
 Werkzeug==3.0.1
+datadog==0.48.0

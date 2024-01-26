@@ -11,6 +11,8 @@ from flask import Flask, jsonify, request, redirect
 from prometheus_client import make_wsgi_app, Counter
 from flask_cors import CORS
 
+from utils import setting_statsd, StatsdMiddleware
+
 DEBUG = os.environ.get("DEBUG", 0)
 if DEBUG in ["1", True, "true", 1]:
     DEBUG = 1
@@ -82,8 +84,11 @@ else:
     sys.exit(1)
 
 
+setting_statsd()
 # Add prometheus wsgi middleware to route /metrics requests
-app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": make_wsgi_app()})
+dispatcher_middleware = DispatcherMiddleware(app.wsgi_app, {"/metrics": make_wsgi_app()})
+statsd_middleware = StatsdMiddleware(dispatcher_middleware, "flask-monitoring")
+app.wsgi_app = statsd_middleware
 
 
 @app.before_request
