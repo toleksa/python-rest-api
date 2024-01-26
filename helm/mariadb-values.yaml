@@ -17,6 +17,11 @@ auth:
   authPassword: password123
   auth.existingSecret: ""
 
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+
 initdbScripts:
   init.sql: |
     create table python_rest_api.dict(k varchar(50) primary key,v varchar (50));
