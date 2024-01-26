@@ -102,6 +102,7 @@ pipeline {
                                 echo "ERR: prometheus not ready, exiting" ; exit 1 ; fi ; counter=$((counter+1)) ; printf "." ; sleep 1 ; done ; \
                                 pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_integration_result.xml /pytest/test_integration.py ;\
                                 pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_www_result.xml /pytest/test_www.py ;\
+                                sleep 3s ;\
                                 pytest -o cache_dir=/tmp/.pytest_cache --junit-xml=test_prometheus_result.xml /pytest/test_prometheus.py'
                           }
                         }
