@@ -16,6 +16,7 @@ spec:
       values: |
         serviceMonitor:
           enabled: {{ .Values.monitoring.enabled }}
+          namespace: python-rest-api
   syncPolicy:
     automated:
       prune: true
