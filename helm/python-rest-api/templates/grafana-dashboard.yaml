@@ -9,4 +9,8 @@ metadata:
 data:
   python-rest-api.json: |-
 {{ .Files.Get "files/python-rest-api.json" | indent 4}}
+  python-rest-api-mariadb.json: |-
+{{ .Files.Get "files/python-rest-api-mariadb.json" | indent 4}}
+  python-rest-api-statsd.json: |-
+{{ .Files.Get "files/python-rest-api-statsd.json" | indent 4}}
 {{- end }}
