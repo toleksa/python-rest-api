@@ -239,3 +239,7 @@ def test_metrics1():
             if sample.name == "responses_total" and sample.labels == {'endpoint': '/data/del/Winnie', 'status_code': '204'}:
                 assert sample.value == 2
 
+def test_random_status():
+    for _ in range(5):
+        response = requests.get(os.environ['API_URL'] + "/random_status")
+        assert response.status_code in [200, 300, 400, 400, 500]

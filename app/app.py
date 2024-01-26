@@ -7,7 +7,7 @@ from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 import mariadb
 import redis
-from flask import Flask, jsonify, request, redirect
+from flask import Flask, jsonify, request, redirect, Response
 from prometheus_client import make_wsgi_app, Counter
 from flask_cors import CORS
 
@@ -262,3 +262,9 @@ def get_ids(cursor):
     db_host = cursor.fetchone()
     result = {"api_host": api_host, "db_host": db_host[0]}
     return jsonify(result), 200
+
+@app.route("/random_status")
+def random_status():
+    """generates random status response - for generating nice graphs in grafana"""
+    status_code = random.choice([200] * 6 + [300, 400, 400, 500])
+    return Response("random status", status=status_code)
