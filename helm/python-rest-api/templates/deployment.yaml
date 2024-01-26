@@ -67,6 +67,10 @@ spec:
             value: python-rest-api-redis-master
           - name: REDIS_PORT
             value: "6379"
+          - name: STATSD_HOST
+            value: python-rest-api-statsd-prometheus-statsd-exporter
+          - name: STATSD_PORT
+            value: "9125"
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
