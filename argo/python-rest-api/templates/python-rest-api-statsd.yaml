@@ -14,6 +14,8 @@ spec:
     chart: prometheus-statsd-exporter
     helm:
       values: |
+        serviceMonitor:
+          enabled: {{ .Values.monitoring.enabled }}
   syncPolicy:
     automated:
       prune: true
