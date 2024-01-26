@@ -5,11 +5,11 @@ services:
     image: docker.io/toleksa/python-rest-api-test:latest
     build:
       context: .
-      dockerfile: tests/integration/Dockerfile
+      dockerfile: tests/Dockerfile
     container_name: python-rest-api-test
     entrypoint: tail -f /dev/null
-    volumes:
-      - ${PWD}/tests/integration:/pytest:Z
+    #volumes:
+    #  - ${PWD}/tests:/pytest:Z
     environment:
       - API_URL=${API_URL}
       - WWW_URL=${WWW_URL}
@@ -20,7 +20,7 @@ services:
     entrypoint: ''
     command: sleep infinity
     volumes:
-      - ${PWD}/tests/performance:/bzt-configs:Z
+      - ${PWD}/tests:/bzt-configs:Z
     environment:
       - API_URL=${API_URL}
   db:
