@@ -94,7 +94,7 @@ pipeline {
                               --web.console.libraries=/opt/bitnami/prometheus/conf/console_libraries \
                               --web.console.templates=/opt/bitnami/prometheus/conf/consoles") {
                           docker.image("prom/statsd-exporter:latest").withRun("--network ${n} \
-                            --network-alias statsd --hostname statsd {
+                            --network-alias statsd --hostname statsd") {
                             tests_image = docker.image("${IMAGE}-tests:${BUILD_NUMBER}")
                             tests_image.inside("--network ${n} --network-alias pytest_integration --hostname pytest_integration \
                                 -e API_URL=${API_URL} -e PROMETHEUS_URL=${PROMETHEUS_URL} -e WWW_URL=${WWW_URL}") {
