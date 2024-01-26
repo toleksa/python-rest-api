@@ -15,3 +15,4 @@ spec:
   sourceRepos:
   - 'https://github.com/toleksa/python-rest-api'
   - 'https://charts.bitnami.com/bitnami'
+  - 'https://prometheus-community.github.io/helm-charts'
