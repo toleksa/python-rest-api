@@ -52,5 +52,6 @@ kubectl -n python-rest-api create secret generic mariadb --from-literal=mariadb-
 kubectl -n python-rest-api create configmap mariadb-init --from-file=../app/init.sql
 kubectl -n python-rest-api apply -f mariadb.yaml
 kubectl -n python-rest-api apply -f redis.yaml
+kubectl -n python-rest-api apply -f statsd.yaml
 sed -e "s/example.com/`hostname -d`/" python-rest-api.yaml | kubectl -n python-rest-api apply -f -
 
