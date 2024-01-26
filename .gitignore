@@ -2,7 +2,7 @@ __pycache__
 .idea
 *.swp
 ticket.txt
-tests/performance/bzt-result.xml
-tests/performance/jmeter.log
-tests/performance/test.yml
+tests/bzt-result.xml
+tests/jmeter.log
+tests/test.yml
 www/api_url.js
