@@ -1,0 +1,11 @@
+grafana:
+  adminPassword: prom-operator
+  ingress:
+    enabled: true
+    hosts:
+    - "grafana.example.com"
+
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelector: {}
+    serviceMonitorSelectorNilUsesHelmValues: false

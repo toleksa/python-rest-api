@@ -48,7 +48,7 @@ spec:
 EOF
 
 echo "installing kube-prometheus-stack"
-helm install --create-namespace --namespace monitoring kube-prometheus-stack prometheus-community/kube-prometheus-stack
+sed -e "s/example.com/`hostname -d`/" monitoring-values.yaml | helm install --create-namespace --namespace monitoring kube-prometheus-stack prometheus-community/kube-prometheus-stack -f -
 
 echo "installing python-rest-api"
 helm install --create-namespace --namespace python-rest-api python-rest-api-mariadb bitnami/mariadb -f mariadb-values.yaml
