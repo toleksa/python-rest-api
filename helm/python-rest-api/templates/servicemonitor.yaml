@@ -15,4 +15,21 @@ spec:
   - interval: 30s
     port: "http"
     path: /metrics
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: "{{ include "python-rest-api.fullname" . }}-statsd"
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: "python-rest-api-statsd"
+      app.kubernetes.io/name: "prometheus-statsd-exporter"
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  endpoints:
+  - interval: 30s
+    port: "http"
+    path: /metrics
 {{- end }}
