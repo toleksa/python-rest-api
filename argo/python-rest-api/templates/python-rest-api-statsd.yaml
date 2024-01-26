@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: python-rest-api-statsd
+  namespace: argocd
+spec:
+  destination:
+    namespace: python-rest-api
+    server: 'https://kubernetes.default.svc'
+  project: python-rest-api
+  source:
+    repoURL: 'https://prometheus-community.github.io/helm-charts'
+    targetRevision: '0.11.0'
+    chart: prometheus-statsd-exporter
+    helm:
+      values: |
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=false
