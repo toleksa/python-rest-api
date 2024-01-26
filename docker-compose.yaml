@@ -37,7 +37,7 @@ services:
         max_attempts: 5
 
   statsd:
-    image: prom/statsd-exporter:v0.22.4
+    image: prom/statsd-exporter:latest
     container_name: python-rest-api-statsd
     ports:
       - "9125:9125"
