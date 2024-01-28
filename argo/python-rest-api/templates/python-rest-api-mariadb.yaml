@@ -10,7 +10,7 @@ spec:
   project: python-rest-api
   source:
     repoURL: 'https://charts.bitnami.com/bitnami'
-    targetRevision: '15.1.0'
+    targetRevision: '15.2.0'
     chart: mariadb
     helm:
       values: |
