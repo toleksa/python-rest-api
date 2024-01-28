@@ -6,6 +6,10 @@ grafana:
     - "grafana.example.com"
 
 prometheus:
+  ingress:
+    enabled: true
+    hosts:
+    - "prometheus.example.com"
   prometheusSpec:
     serviceMonitorSelector: {}
     serviceMonitorSelectorNilUsesHelmValues: false
