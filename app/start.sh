@@ -7,5 +7,7 @@ DB_DATABASE=${DB_DATABASE:-python_rest_api} \
 API_PORT=${API_PORT:-5000} \
 DB_USER=${DB_USER:-user} \
 DB_PASS=${DB_PASS:-password} \
+JAEGER_HOST=${JAEGER_HOST:-127.0.0.1}
+JAEGER_PORT=${JAEGER_PORT:-6831}
 flask run --host=0.0.0.0 --port=${API_PORT:-5000}
 

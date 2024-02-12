@@ -35,6 +35,8 @@ services:
       - DB_DATABASE=${DB_DATABASE}
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
+      - JAEGER_HOST=${JAEGER_HOST}
+      - JAEGER_PORT=${JAEGER_PORT}
     deploy:
       restart_policy:
         condition: on-failure
@@ -74,4 +76,20 @@ services:
     environment:
       #- ENV_API_URL=http://${HOSTNAME}:5000
       - WWW_PORT=${WWW_PORT}
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: python-rest-api-jaeger
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+    ports:
+      #TODO: 6831 - for sending traces, 16686 - www -> are other ports needed?
+      - ${JAEGER_PORT}:6831/udp
+      - 5775:5775/udp
+      - 6832:6832/udp
+      - 5778:5778
+      - 16686:16686
+      - 14268:14268
+      - 14250:14250
+      - 9411:9411
 

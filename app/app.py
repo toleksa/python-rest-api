@@ -44,8 +44,8 @@ def configure_opentelemetry():
         )
     )
     jaeger_exporter = JaegerExporter(
-        agent_host_name="localhost",
-        agent_port=6831,
+        agent_host_name=os.environ["JAEGER_HOST"],
+        agent_port=os.environ["JAEGER_PORT"],
     )
     trace.get_tracer_provider().add_span_processor(
         BatchSpanProcessor(jaeger_exporter)
