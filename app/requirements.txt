@@ -11,3 +11,6 @@ prometheus-client==0.18.0
 redis==5.0.1
 Werkzeug==3.0.1
 datadog==0.48.0
+opentelemetry-instrumentation-flask==0.43b0
+opentelemetry-sdk==1.22.0
+opentelemetry-exporter-jaeger==1.21.0
