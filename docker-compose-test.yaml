@@ -23,12 +23,6 @@ services:
       - ${PWD}/tests:/bzt-configs:Z
     environment:
       - API_URL=${API_URL}
-  db:
-    ports:
-      - ${DB_PORT}:${DB_PORT}
-  redis:
-    ports:
-      - ${REDIS_PORT}:${REDIS_PORT}
   www:
     environment:
       - ENV_API_URL=${API_URL}

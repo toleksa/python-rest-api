@@ -12,10 +12,14 @@ services:
       - MARIADB_USER=${DB_USER}
       - MARIADB_DATABASE=${DB_DATABASE}
       - MARIADB_ROOT_PASSWORD=${DB_PASS}
+    ports:
+      - ${DB_PORT}:${DB_PORT}
 
   redis:
     image: docker.io/library/redis:alpine
     container_name: python-rest-api-redis
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
 
   api:
     image: docker.io/toleksa/python-rest-api:latest
