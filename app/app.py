@@ -1,6 +1,6 @@
 """Simple rest api with key-value database"""
-import sys
 import os
+import sys
 import time
 import random
 from functools import wraps
@@ -8,11 +8,22 @@ from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 import mariadb
 import redis
+
 from flask import Flask, jsonify, request, redirect, Response
-from prometheus_client import make_wsgi_app, Counter
 from flask_cors import CORS
 
+from prometheus_client import make_wsgi_app, Counter
+
 from utils import setting_statsd, StatsdMiddleware
+
+from opentelemetry import trace
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter
+from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+from opentelemetry.sdk.resources import SERVICE_NAME, Resource
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
 DEBUG = os.environ.get("DEBUG", 0)
 if DEBUG in ["1", True, "true", 1]:
@@ -24,6 +35,21 @@ else:
     sys.exit(1)
 if DEBUG == 1:
     print("Enabled DEBUG")
+
+# Configure OpenTelemetry with Jaeger exporter
+def configure_opentelemetry():
+    trace.set_tracer_provider(
+        TracerProvider(
+            resource=Resource.create({SERVICE_NAME: "python-rest-api"})
+        )
+    )
+    jaeger_exporter = JaegerExporter(
+        agent_host_name="localhost",
+        agent_port=6831,
+    )
+    trace.get_tracer_provider().add_span_processor(
+        BatchSpanProcessor(jaeger_exporter)
+    )
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -91,6 +117,9 @@ dispatcher_middleware = DispatcherMiddleware(app.wsgi_app, {"/metrics": make_wsg
 statsd_middleware = StatsdMiddleware(dispatcher_middleware, "flask-monitoring")
 app.wsgi_app = statsd_middleware
 
+# Configure OpenTelemetry when the app starts
+configure_opentelemetry()
+FlaskInstrumentor().instrument_app(app)
 
 @app.before_request
 def before_request():
@@ -101,7 +130,6 @@ def before_request():
         print("request path: " + str(request.path))
         print("request url_rule: " + str(request.url_rule))
     requests.labels(request.path, request.method).inc()
-
 
 @app.after_request
 def after_request(response):
@@ -129,7 +157,6 @@ def db_connection(func):
             cursor.close()
             conn.close()
         return result
-
     return wrapper
 
 
