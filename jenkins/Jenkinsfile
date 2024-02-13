@@ -41,7 +41,7 @@ pipeline {
     stages{
         stage('Build'){
             steps{
-                sh "echo building branch: ${env.GIT_BRANCH}"
+                echo "building branch: ${env.GIT_BRANCH}"
                 script{
                     docker_image = docker.build("${IMAGE}:${BUILD_NUMBER}","${SUBDIR}")
                     docker_image_www = docker.build("${IMAGE}-www:${BUILD_NUMBER}","${WWW_SUBDIR}")
@@ -184,7 +184,7 @@ pipeline {
                             docker_image_tests.push('latest')
                         }
                     } else {
-                        sh 'echo "skipping publishing on ${env.GIT_BRANCH} branch"'
+                        echo "skipping publishing on ${env.GIT_BRANCH} branch"
                     }
                 }
             }
