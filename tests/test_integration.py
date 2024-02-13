@@ -243,3 +243,7 @@ def test_random_status():
     for _ in range(5):
         response = requests.get(os.environ['API_URL'] + "/random_status")
         assert response.status_code in [200, 300, 400, 400, 500]
+
+def test_random_calls():
+    response = requests.get(os.environ['API_URL'] + "/random_calls")
+    assert response.status_code in [200]
