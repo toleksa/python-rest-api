@@ -43,13 +43,16 @@ def configure_opentelemetry():
             resource=Resource.create({SERVICE_NAME: "python-rest-api"})
         )
     )
-    jaeger_exporter = JaegerExporter(
-        agent_host_name=os.environ["JAEGER_HOST"],
-        agent_port=int(os.environ["JAEGER_PORT"]),
-    )
-    trace.get_tracer_provider().add_span_processor(
-        BatchSpanProcessor(jaeger_exporter)
-    )
+    if "JAEGER_HOST" in os.environ and "JAEGER_PORT" in os.environ:
+        jaeger_exporter = JaegerExporter(
+            agent_host_name=os.environ["JAEGER_HOST"],
+            agent_port=int(os.environ["JAEGER_PORT"]),
+        )
+        trace.get_tracer_provider().add_span_processor(
+            BatchSpanProcessor(jaeger_exporter)
+        )
+    else:
+        print("INFO: Jaeger ENVs not set, JaegerExporter disabled")
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
