@@ -83,13 +83,13 @@ services:
     environment:
       - COLLECTOR_ZIPKIN_HOST_PORT=:9411
     ports:
-      #TODO: 6831 - for sending traces, 16686 - www -> are other ports needed?
+      #TODO: 6831 - for collecting traces, 16686 - www -> are other ports needed?
       - ${JAEGER_PORT}:6831/udp
-      - 5775:5775/udp
-      - 6832:6832/udp
-      - 5778:5778
       - 16686:16686
-      - 14268:14268
-      - 14250:14250
-      - 9411:9411
+      #- 5775:5775/udp
+      #- 6832:6832/udp
+      #- 5778:5778
+      #- 14268:14268
+      #- 14250:14250
+      #- 9411:9411
 
