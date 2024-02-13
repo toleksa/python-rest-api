@@ -19,8 +19,8 @@ void setBuildStatus(String message, String state) {
   ]);
 }
 
-pipeline {                                                                                                                                                                                 
-    environment {                                                                                                                                                                          
+pipeline {
+    environment {
         IMAGE = "toleksa/${JOB_NAME}"
         SUBDIR = "."
         WWW_SUBDIR = "www/"
@@ -34,14 +34,14 @@ pipeline {
         WWW_URL="http://www:${WWW_PORT}"
         PROMETHEUS_PORT=9090
         PROMETHEUS_URL="http://prometheus:${PROMETHEUS_PORT}"
-    }                                                                                                                                                                                      
-    agent{                                                                                                                                                                                 
-        label ''                                                                                                                                                                           
-    }                                                                                                                                                                                      
-    stages{                                                                                                                                                                                
-        stage('Build'){                                                                                                                                                                    
-            steps{                                                                                                                                                                         
-                script{                                                                                                                                                                    
+    }
+    agent{
+        label ''
+    }
+    stages{
+        stage('Build'){
+            steps{
+                script{
                     docker_image = docker.build("${IMAGE}:${BUILD_NUMBER}","${SUBDIR}")
                     docker_image.tag('latest')
                     docker_image_www = docker.build("${IMAGE}-www:${BUILD_NUMBER}","${WWW_SUBDIR}")
