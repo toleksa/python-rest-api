@@ -120,6 +120,7 @@ app.wsgi_app = statsd_middleware
 # Configure OpenTelemetry when the app starts
 configure_opentelemetry()
 FlaskInstrumentor().instrument_app(app)
+tracer = trace.get_tracer(__name__)
 
 @app.before_request
 def before_request():
@@ -296,3 +297,26 @@ def random_status():
     """generates random status response - for generating nice graphs in grafana"""
     status_code = random.choice([200] * 6 + [300, 400, 400, 500])
     return Response("random status", status=status_code)
+
+@app.route("/random_calls")
+def random_calls():
+    """calls couple subfunctions with random wait times to generate traces for Jaeger"""
+    call_one()
+    call_three()
+    return "", 200
+
+def call_one():
+    with tracer.start_as_current_span("call_one"):
+        time.sleep(0.001 * random.randrange(9))
+        call_two()
+        call_two()
+ 
+def call_two():
+    with tracer.start_as_current_span("call_two"):
+        time.sleep(0.001 * random.randrange(3))
+
+def call_three():
+    with tracer.start_as_current_span("call_three"):
+        time.sleep(0.001 * random.randrange(9))
+        call_two()
+
