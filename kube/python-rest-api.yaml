@@ -60,7 +60,7 @@ spec:
         - name: JAEGER_HOST
           value: "jaeger"
         - name: JAEGER_PORT
-          value: 6831
+          value: "6831"
 
 ---
 apiVersion: v1
