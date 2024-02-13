@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: python-rest-api-deployment
+  name: python-rest-api
   labels:
     app: python-rest-api
 spec:
@@ -44,25 +44,29 @@ spec:
         - name: API_PORT
           value: "5000"
         - name: DB_HOST
-          value: mariadb
+          value: "mariadb"
         - name: DB_PORT
           value: "3306"
         - name: DB_DATABASE
           value: "python_rest_api"
         - name: REDIS_HOST
-          value: redis
+          value: "redis"
         - name: REDIS_PORT
           value: "6379"
         - name: STATSD_HOST
-          value: "python-rest-api-statsd"
+          value: "statsd"
         - name: STATSD_PORT
           value: "9125"
+        - name: JAEGER_HOST
+          value: "jaeger"
+        - name: JAEGER_PORT
+          value: 6831
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: python-rest-api-service
+  name: python-rest-api
 spec:
   selector:
     app: python-rest-api
@@ -75,7 +79,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: python-rest-api-ingress
+  name: python-rest-api
   annotations:
     kubernetes.io/ingress.class: nginx
 spec:
@@ -87,6 +91,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: python-rest-api-service
+            name: python-rest-api
             port:
               number: 5000

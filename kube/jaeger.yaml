@@ -2,54 +2,54 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: statsd
+  name: jaeger
   labels:
-    app: statsd
+    app: jaeger
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: statsd
+      app: jaeger
   template:
     metadata:
       labels:
-        app: statsd
+        app: jaeger
     spec:
       containers:
-      - name: statsd
-        image: prom/statsd-exporter:latest
+      - name: jaeger
+        image: jaegertracing/all-in-one:latest
         ports:
         - name: http
-          containerPort: 9125
-        - name: metrics
-          containerPort: 9102
+          containerPort: 16686
+        - name: collector
+          containerPort: 6831
         livenessProbe:
           httpGet:
             path: /
-            port: metrics
+            port: http
           initialDelaySeconds: 3
           periodSeconds: 30
         readinessProbe:
           httpGet:
             path: /
-            port: metrics
+            port: http
           initialDelaySeconds: 5
           periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: statsd
+  name: jaeger
 spec:
   selector:
-    app: statsd
+    app: jaeger
   type: ClusterIP
   ports:
     - protocol: TCP
       name: http
-      port: 9125
-      targetPort: 9125
+      port: 16686
+      targetPort: 16686
     - protocol: TCP
-      name: metrics
-      port: 9102
-      targetPort: 9102
+      name: collector
+      port: 6831
+      targetPort: 6831
