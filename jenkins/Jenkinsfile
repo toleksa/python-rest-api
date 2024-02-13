@@ -41,14 +41,11 @@ pipeline {
     stages{
         stage('Build'){
             steps{
-                sh "echo ${env.BRANCH_NAME} ${env.GIT_BRANCH}"
+                sh "echo building branch: ${env.GIT_BRANCH}"
                 script{
                     docker_image = docker.build("${IMAGE}:${BUILD_NUMBER}","${SUBDIR}")
-                    docker_image.tag('latest')
                     docker_image_www = docker.build("${IMAGE}-www:${BUILD_NUMBER}","${WWW_SUBDIR}")
-                    docker_image_www.tag('latest')
                     docker_image_tests = docker.build("${IMAGE}-tests:${BUILD_NUMBER}","-f tests/Dockerfile .")
-                    docker_image_tests.tag('latest')
                 }
                 sh 'docker images'
             }                                                                                                                                                                              
@@ -174,11 +171,20 @@ pipeline {
         stage('Publish'){
             steps{
                 script {
-                    docker.withRegistry( '', 'dockerhub' ) {
-                        docker_image.push()
-                        docker_image.push('latest')
-                        docker_image_www.push()
-                        docker_image_www.push('latest')
+                    if (env.GIT_BRANCH == 'origin/master'){
+                        docker.withRegistry( '', 'dockerhub' ) {
+                            docker_image.push()
+                            docker_image.tag('latest')
+                            docker_image.push('latest')
+                            docker_image_www.push()
+                            docker_image_www.tag('latest')
+                            docker_image_www.push('latest')
+                            docker_image_tests.push()
+                            docker_image_tests.tag('latest')
+                            docker_image_tests.push('latest')
+                        }
+                    } else {
+                        sh 'echo "skipping publishing on ${env.GIT_BRANCH} branch"'
                     }
                 }
             }
