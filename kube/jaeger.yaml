@@ -53,3 +53,22 @@ spec:
       name: collector
       port: 6831
       targetPort: 6831
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jaeger
+spec:
+  ingressClassName: "nginx"
+  rules:
+  - host: jaeger.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: jaeger
+            port:
+              number: 16686
+  
