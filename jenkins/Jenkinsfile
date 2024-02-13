@@ -41,7 +41,7 @@ pipeline {
     stages{
         stage('Build'){
             steps{
-                sh "echo ${env.BRANCH_NAME}"
+                sh "echo ${env.BRANCH_NAME} ${env.GIT_BRANCH}"
                 script{
                     docker_image = docker.build("${IMAGE}:${BUILD_NUMBER}","${SUBDIR}")
                     docker_image.tag('latest')
