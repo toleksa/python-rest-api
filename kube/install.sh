@@ -53,5 +53,6 @@ kubectl -n python-rest-api create configmap mariadb-init --from-file=../app/init
 kubectl -n python-rest-api apply -f mariadb.yaml
 kubectl -n python-rest-api apply -f redis.yaml
 kubectl -n python-rest-api apply -f statsd.yaml
+kubectl -n python-rest-api apply -f jaeger.yaml
 sed -e "s/example.com/`hostname -d`/" python-rest-api.yaml | kubectl -n python-rest-api apply -f -
 
