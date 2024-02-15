@@ -184,10 +184,10 @@ pipeline {
                             docker_image_tests.push('latest')
                         }
                     } else {
-                        //echo "skipping publishing on ${env.GIT_BRANCH} branch"
+                        echo "skipping publishing on ${env.GIT_BRANCH} branch"
                         def BRANCH = env.GIT_BRANCH.substring(env.GIT_BRANCH.lastIndexOf('/') + 1)
                         docker_image.tag(BRANCH)
-                        docker_image.push(BRANCH)
+                        //docker_image.push(BRANCH)
                     }
                 }
             }
