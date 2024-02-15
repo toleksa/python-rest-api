@@ -17,7 +17,6 @@ from prometheus_client import make_wsgi_app, Counter
 from utils import setting_statsd, StatsdMiddleware
 
 from opentelemetry import trace
-from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter
@@ -36,8 +35,8 @@ else:
 if DEBUG == 1:
     print("Enabled DEBUG")
 
-# Configure OpenTelemetry with Jaeger exporter
 def configure_opentelemetry():
+    """Configure OpenTelemetry with Jaeger exporter"""
     trace.set_tracer_provider(
         TracerProvider(
             resource=Resource.create({SERVICE_NAME: "python-rest-api"})
@@ -309,17 +308,19 @@ def random_calls():
     return "", 200
 
 def call_one():
+    """Simple function to generate traces for Jaeger"""
     with tracer.start_as_current_span("call_one"):
         time.sleep(0.001 * random.randrange(9))
         call_two()
         call_two()
- 
+
 def call_two():
+    """Simple function to generate traces for Jaeger"""
     with tracer.start_as_current_span("call_two"):
         time.sleep(0.001 * random.randrange(3))
 
 def call_three():
+    """Simple function to generate traces for Jaeger"""
     with tracer.start_as_current_span("call_three"):
         time.sleep(0.001 * random.randrange(9))
         call_two()
-
