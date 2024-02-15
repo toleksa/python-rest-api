@@ -43,7 +43,7 @@ def configure_opentelemetry():
     )
     if "JAEGER_HOST" in os.environ and "JAEGER_PORT" in os.environ:
         if DEBUG == 1:
-            print(f"DEBUG: starting JaegerExporter to {os.environ['JAEGER_HOST']:os.environ['JAEGER_PORT']")
+            print(f"DEBUG: starting JaegerExporter to {os.environ['JAEGER_HOST']}:{os.environ['JAEGER_PORT']}")
         jaeger_exporter = JaegerExporter(
             agent_host_name=os.environ["JAEGER_HOST"],
             agent_port=int(os.environ["JAEGER_PORT"]),
