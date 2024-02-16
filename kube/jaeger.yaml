@@ -49,7 +49,7 @@ spec:
       name: http
       port: 16686
       targetPort: 16686
-    - protocol: TCP
+    - protocol: UDP
       name: collector
       port: 6831
       targetPort: 6831
