@@ -122,7 +122,7 @@ app.wsgi_app = statsd_middleware
 
 # Configure OpenTelemetry when the app starts
 configure_opentelemetry()
-FlaskInstrumentor().instrument_app(app)
+FlaskInstrumentor().instrument_app(app, excluded_urls="/health")
 tracer = trace.get_tracer(__name__)
 
 @app.before_request
