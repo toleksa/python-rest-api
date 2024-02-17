@@ -1,3 +1,4 @@
+{{- if .Values.jaeger.enabled }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -38,3 +39,4 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - PruneLast=false
+{{- end }}

@@ -71,10 +71,12 @@ spec:
             value: python-rest-api-statsd-prometheus-statsd-exporter
           - name: STATSD_PORT
             value: "9125"
+          {{- if .Values.jaeger.enabled }}
           - name: JAEGER_HOST
             value: jaeger-agent
           - name: JAEGER_PORT
             value: "6831"
+          {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

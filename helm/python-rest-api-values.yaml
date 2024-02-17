@@ -13,3 +13,5 @@ ingress:
 
 monitoring:
   enabled: true
+jaeger:
+  enabled: true

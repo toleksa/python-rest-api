@@ -29,6 +29,8 @@ spec:
           tls: []
         monitoring:
           enabled: {{ .Values.monitoring.enabled }}
+        jaeger:
+          enabled: {{ .Values.jaeger.enabled }}
   syncPolicy:
     automated:
       prune: true
