@@ -1,0 +1,18 @@
+---
+provisionDataStore:
+  cassandra: false
+allInOne:
+  enabled: true
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+    - jaeger.example.com
+storage:
+  type: none
+agent:
+  enabled: false
+collector:
+  enabled: false
+query:
+  enabled: false
