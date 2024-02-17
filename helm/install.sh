@@ -54,6 +54,6 @@ echo "installing python-rest-api"
 helm install --create-namespace --namespace python-rest-api python-rest-api-mariadb bitnami/mariadb -f mariadb-values.yaml
 helm install --namespace python-rest-api python-rest-api-redis bitnami/redis -f redis-values.yaml
 helm install --namespace python-rest-api python-rest-api-statsd prometheus-community/prometheus-statsd-exporter --set serviceMonitor.enabled=true,serviceMonitor.namespace=python-rest-api
-sed -e "s/example.com/`hostname -d`/" jaeger-values.yaml | helm install --namespace python-rest-api jaeger jaegertracing/jaeger -f -
+sed -e "s/example.com/`hostname -d`/" jaeger-values.yaml | helm install --namespace python-rest-api python-rest-api-jaeger jaegertracing/jaeger -f -
 sed -e "s/example.com/`hostname -d`/" python-rest-api-values.yaml | helm install --create-namespace --namespace python-rest-api python-rest-api ./python-rest-api -f -
 
