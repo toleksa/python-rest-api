@@ -10,10 +10,11 @@ spec:
   project: python-rest-api
   source:
     repoURL: 'https://github.com/toleksa/python-rest-api'
-    targetRevision: HEAD
+    targetRevision: "{{ .Values.targetRevision }}"
     path: 'helm/python-rest-api'
     helm:
       values: |
+        targetRevision: "{{ .Values.targetRevision }}"
         replicaCount: "{{ .Values.replicaCount }}"
         ingress:
           enabled: true

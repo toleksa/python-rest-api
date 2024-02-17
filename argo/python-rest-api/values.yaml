@@ -1,4 +1,5 @@
 domain: example.com
+targetRevision: HEAD
 replicaCount: 1
 monitoring.enabled: false
 jaeger.enabled: false
