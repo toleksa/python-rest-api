@@ -73,7 +73,7 @@ spec:
             value: "9125"
           {{- if .Values.jaeger.enabled }}
           - name: JAEGER_HOST
-            value: jaeger-agent
+            value: python-rest-api-jaeger-agent
           - name: JAEGER_PORT
             value: "6831"
           {{- end }}
