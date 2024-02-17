@@ -14,7 +14,7 @@ spec:
     path: 'argo/python-rest-api'
     helm:
       values: |
-        targetRevision: "{{ .Source.TargetRevision }}"
+        targetRevision: HEAD
         replicaCount: 1
         domain: example.com
         monitoring:
