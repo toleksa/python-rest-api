@@ -18,6 +18,8 @@ spec:
         domain: example.com
         monitoring:
           enabled: true
+        jaeger:
+          enabled: true
   syncPolicy:
     automated:
       prune: true

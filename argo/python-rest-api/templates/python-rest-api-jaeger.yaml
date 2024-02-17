@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: python-rest-api-jaeger
+  namespace: argocd
+spec:
+  destination:
+    namespace: python-rest-api
+    server: 'https://kubernetes.default.svc'
+  project: python-rest-api
+  source:
+    repoURL: 'https://jaegertracing.github.io/helm-charts'
+    targetRevision: 1.0.0
+    chart: jaeger
+    helm:
+      values: |
+        provisionDataStore:
+          cassandra: false
+        allInOne:
+          enabled: true
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            hosts:
+            - "jaeger.{{ .Values.domain}}"
+        storage:
+          type: none
+        agent:
+          enabled: false
+        collector:
+          enabled: false
+        query:
+          enabled: false
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=false

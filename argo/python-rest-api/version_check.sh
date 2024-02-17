@@ -4,6 +4,7 @@ APPS="
 bitnami/mariadb python-rest-api-mariadb
 bitnami/redis python-rest-api-redis
 prometheus-community/prometheus-statsd-exporter python-rest-api-statsd
+jaegertracing/jaeger python-rest-api-jaeger
 "
 
 helm repo update &> /dev/null
