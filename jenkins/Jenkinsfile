@@ -197,7 +197,7 @@ pipeline {
                 sh '''
                     #!/bin/bash
                     for IMG in ${IMAGE} ${IMAGE}-tests ${IMAGE}-www ; do
-                      for TAG in $(docker images | grep "${IMG} " | grep -v latest | awk '$2 ~ /^[0-9]+$/' | sort -rnk 2 | tail -n +5 | gawk '{ print $1":"$2 }') ; do docker rmi $TAG ; done ;
+                      for TAG in $(docker images | grep "${IMG} " | grep -v latest | awk '$2 ~ /^[0-9]+$/' | sort -rnk 2 | tail -n +6 | gawk '{ print $1":"$2 }') ; do docker rmi $TAG ; done ;
                     done
                 '''
                 //sh 'docker volume rm $(docker volume ls -qf "dangling=true")'
