@@ -41,6 +41,12 @@ pipeline {
     stages{
         stage('Build'){
             steps{
+                echo "DEBUG: env"
+                echo "env.BRANCH_NAME: ${env.BRANCH_NAME}"
+                echo "GIT_BRANCH#*/: ${GIT_BRANCH#*/}"
+                echo "GIT_LOCAL_BRANCH: ${env.GIT_LOCAL_BRANCH}"
+                echo "printenv:"
+                  printenv
                 echo "building branch: ${env.GIT_BRANCH}"
                 script{
                     docker_image = docker.build("${IMAGE}:${BUILD_NUMBER}","${SUBDIR}")
