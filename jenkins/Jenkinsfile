@@ -41,10 +41,7 @@ pipeline {
     stages{
         stage('Build'){
             steps{
-                echo "DEBUG: env"
-                echo "env.BRANCH_NAME: ${env.BRANCH_NAME}"
-                echo "GIT_LOCAL_BRANCH: ${env.GIT_LOCAL_BRANCH}"
-                echo "printenv:"
+                echo "DEBUG: printenv"
                 sh 'printenv'
                 echo "building branch: ${env.GIT_BRANCH}"
                 script{
