@@ -21,7 +21,6 @@ spec:
           enabled: true
           ingress:
             enabled: true
-            ingressClassName: ""
             hosts:
             - "jaeger.{{ .Values.domain}}"
         storage:
