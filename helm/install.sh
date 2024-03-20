@@ -46,6 +46,16 @@ spec:
   addresses:
   - `hostname -I | awk '{print $1"/32"}'`
 EOF
+kubectl -n metallb-system apply -f - <<EOF
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: metallb-l2a-default
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - metallb-pool-default
+EOF
 
 echo "installing kube-prometheus-stack"
 sed -e "s/example.com/`hostname -d`/" monitoring-values.yaml | helm install --create-namespace --namespace monitoring kube-prometheus-stack prometheus-community/kube-prometheus-stack -f -
