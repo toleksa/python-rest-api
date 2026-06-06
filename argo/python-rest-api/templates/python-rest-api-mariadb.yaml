@@ -19,6 +19,9 @@ spec:
           port: 3306
         image:
           repository: 'bitnamilegacy/mariadb'
+        metrics:
+          image:
+            repository: 'bitnamilegacy/mariadb-exporter'
 
         global:
           storageClass: "longhorn"
