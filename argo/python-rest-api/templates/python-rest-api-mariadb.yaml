@@ -10,16 +10,20 @@ spec:
   project: python-rest-api
   source:
     repoURL: 'https://charts.bitnami.com/bitnami'
-    targetRevision: 15.2.0
+    targetRevision: 26.1.1
     chart: mariadb
     helm:
       values: |
         service:
           type: ClusterIP
           port: 3306
+        image:
+          repository: 'bitnamilegacy/mariadb'
 
         global:
           storageClass: "longhorn"
+          security:
+            allowInsecureImages: true
         
         primary:
           persistence:
