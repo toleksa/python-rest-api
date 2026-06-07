@@ -1,0 +1,13 @@
+ingress:
+  enabled: true
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: www.python-rest-api.example.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
